@@ -3,7 +3,7 @@
 **Sistema web transaccional para la gestión integral de gimnasios**
 
 Proyecto Final · SC-403 Desarrollo de Aplicaciones Web y Patrones
-Universidad Fidélitas · Facultad de Ciencias de la Computación · III Cuatrimestre 2026
+Universidad Fidélitas · III Cuatrimestre 2026
 
 > **Estado del proyecto:** Avance 1 (Semana 5): planteamiento, historias de usuario, prototipo y modelo de datos. La implementación del código comienza en el Avance 2.
 
