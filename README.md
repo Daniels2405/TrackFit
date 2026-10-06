@@ -71,7 +71,7 @@ El proyecto nace como propuesta del equipo (no de un cliente específico). Se de
 | Daniel Barrientos Salas | `@Daniels2405` |
 | Julianna Fonseca Rodríguez | `@julifonsecaa` |
 | John Derek Jensen Arguedas | `@jjensen20153` |
-| Víctor Hugo Mora Badilla | `@usuario-github` |
+| Víctor Hugo Mora Badilla | `@vhmora-mb` |
 
 **Profesor:** Prof. Wilberth Molina Pérez
 **Curso:** SC-403 Desarrollo de Aplicaciones Web y Patrones
