@@ -1,0 +1,160 @@
+/* ==========================================================================
+   TrackFit - Estilos Visuales Principales
+   Tema: Gimnasio Moderno y Minimalista (Teal / Petróleo con acentos dorados)
+   ========================================================================== */
+
+:root {
+  --tf-primary: #0E6F7E;
+  --tf-primary-dark: #0A4F5A;
+  --tf-dark: #0F1B20;
+  --tf-accent: #F2B33D;
+  --tf-bg: #F4F7F8;
+  --tf-surface: #FFFFFF;
+  --tf-muted: #6B7C85;
+
+  /* Sobrescribir variables de Bootstrap para consistencia */
+  --bs-primary: #0E6F7E;
+  --bs-primary-rgb: 14, 111, 126;
+  --bs-body-bg: var(--tf-bg);
+}
+
+body {
+  background-color: var(--tf-bg);
+  color: #212529;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Navbar moderna oscura con acento dorado */
+.navbar-trackfit {
+  background-color: var(--tf-dark);
+  border-bottom: 2px solid var(--tf-primary-dark);
+}
+
+.navbar-trackfit .navbar-brand {
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: #FFFFFF !important;
+}
+
+.navbar-trackfit .navbar-brand i {
+  color: var(--tf-accent);
+}
+
+.navbar-trackfit .nav-link {
+  color: #D1D8DB !important;
+  font-weight: 500;
+  padding: 0.6rem 1rem !important;
+  transition: color 0.2s ease-in-out;
+}
+
+.navbar-trackfit .nav-link:hover,
+.navbar-trackfit .nav-link.active {
+  color: var(--tf-accent) !important;
+}
+
+/* Tarjetas blancas con bordes redondeados (rounded-4) y sombra suave */
+.card {
+  background-color: var(--tf-surface);
+  border: 1px solid rgba(15, 27, 32, 0.08);
+  border-radius: 1rem !important;
+  box-shadow: 0 4px 16px rgba(15, 27, 32, 0.04);
+}
+
+/* Botones principales redondeados */
+.btn-primary {
+  background-color: var(--tf-primary);
+  border-color: var(--tf-primary);
+  border-radius: 0.5rem;
+  font-weight: 500;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+  background-color: var(--tf-primary-dark);
+  border-color: var(--tf-primary-dark);
+}
+
+.btn-outline-primary {
+  color: var(--tf-primary);
+  border-color: var(--tf-primary);
+  border-radius: 0.5rem;
+  font-weight: 500;
+}
+
+.btn-outline-primary:hover {
+  background-color: var(--tf-primary);
+  border-color: var(--tf-primary);
+  color: #FFFFFF;
+}
+
+/* Tablas limpias y legibles */
+.table th {
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--tf-muted);
+  font-weight: 600;
+  border-bottom: 2px solid #E2E8F0;
+  background-color: transparent;
+}
+
+.table td {
+  vertical-align: middle;
+}
+
+/* Tarjetas de Planes de Membresía */
+.card-plan {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.card-plan:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 28px rgba(14, 111, 126, 0.12) !important;
+}
+
+.card-plan.plan-destacado {
+  border: 2px solid var(--tf-accent) !important;
+  position: relative;
+}
+
+.badge-destacado {
+  position: absolute;
+  top: -12px;
+  right: 20px;
+  background-color: var(--tf-accent);
+  color: var(--tf-dark);
+  font-weight: 700;
+  font-size: 0.75rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: 50rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* Encabezado de página con subtítulo */
+.main-header {
+  background: linear-gradient(135deg, var(--tf-dark) 0%, var(--tf-primary-dark) 100%);
+  color: #FFFFFF;
+  border-bottom: 3px solid var(--tf-accent);
+}
+
+/* Footer sobrio */
+footer {
+  margin-top: auto;
+  background-color: var(--tf-dark);
+  color: #8C9BA2;
+}
+
+.card-total {
+  background: linear-gradient(135deg, var(--tf-primary) 0%, var(--tf-primary-dark) 100%);
+}
+
+.toast-contenedor {
+  z-index: 1090;
+}
+
+.max-w-600 {
+  max-width: 600px;
+}

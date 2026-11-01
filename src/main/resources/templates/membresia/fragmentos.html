@@ -1,0 +1,191 @@
+<!-- Fragmento #1: Botón para asignar membresía y Modal de Asignación (HU05) -->
+<section th:fragment="botonCrear">
+    <div class="container mb-4">
+        <div class="row align-items-center">
+            <div class="col-md-6 mb-2 mb-md-0">
+                <button type="button"
+                        class="btn btn-primary px-4 py-2 shadow-sm"
+                        data-bs-toggle="modal"
+                        data-bs-target="#membresiaModal">
+                    <i class="fa-solid fa-plus me-1"></i> [[#{membresia.agregar}]]
+                </button>
+            </div>
+            <div class="col-md-6 text-md-end text-muted small">
+                <i class="fa-solid fa-calendar-days text-primary me-1"></i>
+                <span>[[#{membresia.nota.vencimiento}]]</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Asignar Membresía a Cliente (HU05) -->
+    <div class="modal fade" id="membresiaModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content rounded-4 shadow">
+                <form method="post" th:action="@{/membresia/asignar}">
+                    <div class="modal-header bg-dark text-white rounded-top-4">
+                        <h5 class="modal-title fw-bold">
+                            <i class="fa-solid fa-id-card text-warning me-2"></i> [[#{membresia.agregar}]]
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <div class="modal-body p-4">
+                        <!-- Seleccionar Cliente -->
+                        <div class="mb-3">
+                            <label for="selectCliente" class="form-label fw-semibold">[[#{membresia.cliente}]] *</label>
+                            <select id="selectCliente" name="cedulaCliente" class="form-select" required>
+                                <option value="" disabled selected>-- [[#{membresia.cliente.placeholder}]] --</option>
+                                <option th:each="c : ${clientesDisponibles}"
+                                        th:value="${c.cedula}"
+                                        th:text="${c.nombreCompleto + ' (' + c.cedula + ')'}">
+                                    Carlos Rodríguez Mora (200000001)
+                                </option>
+                            </select>
+                        </div>
+
+                        <!-- Seleccionar Plan -->
+                        <div class="mb-3">
+                            <label for="selectPlan" class="form-label fw-semibold">[[#{membresia.plan}]] *</label>
+                            <select id="selectPlan" name="idPlan" class="form-select" required>
+                                <option value="" disabled selected>-- [[#{membresia.plan.placeholder}]] --</option>
+                                <option th:each="p : ${planesDisponibles}"
+                                        th:value="${p.idPlan}"
+                                        th:text="${p.nombre + ' - ' + #messages.msg('general.moneda') + #numbers.formatDecimal(p.precio, 1, 'POINT', 0, 'POINT') + ' (' + #messages.msg('plan.duracion.dias', p.duracionDias) + ')'}">
+                                    Premium - ₡35.000 (30 días)
+                                </option>
+                            </select>
+                        </div>
+
+                        <!-- Fecha de inicio -->
+                        <div class="mb-3">
+                            <label for="inputFechaInicio" class="form-label fw-semibold">[[#{membresia.fecha.inicio}]] *</label>
+                            <input type="date"
+                                   id="inputFechaInicio"
+                                   name="fechaInicio"
+                                   class="form-control"
+                                   th:value="${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd')}"
+                                   required/>
+                        </div>
+
+                        <!-- Nota de cálculo automático -->
+                        <div class="p-3 bg-light rounded-3 border small text-muted">
+                            <i class="fa-solid fa-calculator text-primary me-1"></i>
+                            <strong>[[#{membresia.calculo.titulo}]]</strong> [[#{membresia.calculo.texto}]]
+                        </div>
+                    </div>
+
+                    <div class="modal-footer bg-light rounded-bottom-4">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="fa-solid fa-xmark me-1"></i> [[#{accion.cerrar}]]
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fa-solid fa-floppy-disk me-1"></i> [[#{accion.asignar}]]
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Fragmento #2: Tabla de Membresías Asignadas -->
+<section th:fragment="listado">
+    <div class="container">
+        <div class="row g-4">
+            <!-- Tabla principal de membresías -->
+            <div class="col-lg-9">
+                <div class="card p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold text-dark mb-0">
+                            <i class="fa-solid fa-receipt text-primary me-2"></i> [[#{membresia.listado}]]
+                        </h5>
+                    </div>
+
+                    <div th:if="${membresias != null and !membresias.empty}" class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>[[#{membresia.cliente}]]</th>
+                                    <th>[[#{membresia.plan}]]</th>
+                                    <th>[[#{membresia.fecha.inicio}]]</th>
+                                    <th>[[#{membresia.fecha.vencimiento}]]</th>
+                                    <th>[[#{general.estado}]]</th>
+                                    <th class="text-end">[[#{accion.acciones}]]</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="m : ${membresias}">
+                                    <td class="text-muted small" th:text="${m.idMembresia}">1</td>
+                                    <td>
+                                        <div class="fw-bold text-dark" th:text="${m.usuario != null ? m.usuario.nombreCompleto : #messages.msg('membresia.sin.cliente')}">Carlos Rodríguez</div>
+                                        <small class="text-muted" th:text="${m.usuario != null ? m.usuario.cedula : ''}">200000001</small>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-light text-dark border fw-semibold" th:text="${m.planMembresia != null ? m.planMembresia.nombre : #messages.msg('membresia.sin.plan')}">Premium</span>
+                                        <small class="text-muted d-block" th:if="${m.planMembresia != null}">
+                                            [[#{general.moneda}]][[${#numbers.formatDecimal(m.planMembresia.precio, 1, 'POINT', 0, 'POINT')}]]
+                                        </small>
+                                    </td>
+                                    <td class="small" th:text="${#temporals.format(m.fechaInicio, 'dd/MM/yyyy')}">01/10/2026</td>
+                                    <td class="small fw-semibold" th:text="${#temporals.format(m.fechaVencimiento, 'dd/MM/yyyy')}">31/10/2026</td>
+                                    <td>
+                                        <!-- Badge dinámico de vigencia / estado -->
+                                        <span class="badge rounded-pill"
+                                              th:classappend="${m.estado == 'Cancelada'} ? 'bg-secondary' : (${m.vigente} ? 'bg-success' : 'bg-danger')"
+                                              th:text="${m.estado == 'Cancelada'} ? #{membresia.cancelada} : (${m.vigente} ? #{membresia.vigente} : #{membresia.vencida})">
+                                            Vigente
+                                        </span>
+                                    </td>
+                                    <td class="text-end text-nowrap">
+                                        <!-- Cancelar Membresía -->
+                                        <form th:if="${m.estado == 'Activa'}"
+                                              method="post"
+                                              th:action="@{/membresia/cancelar}"
+                                              class="d-inline"
+                                              th:data-confirmar="#{membresia.confirmar.cancelar}">
+                                            <input type="hidden" name="idMembresia" th:value="${m.idMembresia}"/>
+                                            <button type="submit" class="btn btn-sm btn-outline-warning" th:title="#{membresia.cancelar}">
+                                                <i class="fa-solid fa-ban me-1"></i> [[#{accion.cancelar}]]
+                                            </button>
+                                        </form>
+
+                                        <!-- Eliminar Registro -->
+                                        <button type="button"
+                                                class="btn btn-sm btn-outline-danger"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#confirmModal"
+                                                th:data-bs-id="${m.idMembresia}"
+                                                th:data-bs-descripcion="${'#' + m.idMembresia + ' · ' + (m.usuario != null ? m.usuario.nombreCompleto : '')}"
+                                                th:data-bs-action="@{/membresia/eliminar}"
+                                                    data-bs-param="idMembresia"
+                                                th:title="#{accion.eliminar}">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div th:if="${membresias == null or membresias.empty}" class="text-center p-4 text-muted">
+                        <i class="fa-solid fa-id-card-clip fs-2 mb-2 text-secondary"></i>
+                        <p class="mb-0">[[#{lista.vacia}]]</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tarjeta lateral con totalizador -->
+            <div class="col-lg-3">
+                <div class="card card-total p-4 text-center border-0 shadow-sm text-white">
+                    <div class="card-body py-2">
+                        <i class="fa-solid fa-id-badge display-5 text-warning mb-2"></i>
+                        <h6 class="text-uppercase tracking-wider text-white-50 small mb-1">[[#{membresia.total}]]</h6>
+                        <h2 class="display-5 fw-bold mb-0" th:text="${totalMembresias}">0</h2>
+                        <small class="text-white-50 mt-1 d-block">[[#{membresia.total.detalle}]]</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

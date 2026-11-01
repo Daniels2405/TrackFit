@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://thymeleaf.org"
+      xmlns:sec="http://thymeleaf.org/thymeleaf-extras-springsecurity6">
+    <head th:replace="~{general/fragmentos :: head}"></head>
+    <body>
+        <header th:replace="~{general/fragmentos :: header}"></header>
+
+        <section th:replace="~{general/fragmentos :: titulo('fa-solid fa-user-shield', #{usuario.titulo}, #{usuario.listado})}"></section>
+
+        <!-- Botón superior para agregar y Modal de Formulario -->
+        <section th:replace="~{usuario/fragmentos :: botonCrear}"></section>
+
+        <!-- Listado de usuarios del sistema -->
+        <section th:replace="~{usuario/fragmentos :: listado}"></section>
+
+        <!-- Modal genérico de confirmación de eliminación -->
+        <section th:replace="~{general/fragmentos :: confirmarEliminar}"></section>
+
+        <!-- Mensajes Toasts -->
+        <section th:replace="~{general/fragmentos :: mostrarToast}"></section>
+
+        <footer th:replace="~{general/fragmentos :: footer}"></footer>
+    </body>
+</html>
+

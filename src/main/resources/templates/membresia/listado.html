@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://thymeleaf.org"
+      xmlns:sec="http://thymeleaf.org/thymeleaf-extras-springsecurity6">
+    <head th:replace="~{general/fragmentos :: head}"></head>
+    <body>
+        <header th:replace="~{general/fragmentos :: header}"></header>
+
+        <section th:replace="~{general/fragmentos :: titulo('fa-solid fa-id-card', #{membresia.titulo}, #{membresia.listado})}"></section>
+
+        <!-- Botón superior para asignar y Modal de Asignación -->
+        <section th:replace="~{membresia/fragmentos :: botonCrear}"></section>
+
+        <!-- Listado de membresías asignadas -->
+        <section th:replace="~{membresia/fragmentos :: listado}"></section>
+
+        <!-- Modal genérico de confirmación de eliminación -->
+        <section th:replace="~{general/fragmentos :: confirmarEliminar}"></section>
+
+        <!-- Mensajes Toasts -->
+        <section th:replace="~{general/fragmentos :: mostrarToast}"></section>
+
+        <footer th:replace="~{general/fragmentos :: footer}"></footer>
+    </body>
+</html>
+
