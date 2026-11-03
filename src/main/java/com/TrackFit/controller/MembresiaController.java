@@ -21,7 +21,7 @@ import lombok.RequiredArgsConstructor;
 
 /**
  * Controlador web para la asignación y gestión de Membresías (HU05).
- * 
+ *
  * @author danie
  */
 @Controller
@@ -50,9 +50,9 @@ public class MembresiaController {
 
     @PostMapping("/asignar")
     public String asignar(@RequestParam("cedulaCliente") String cedulaCliente,
-                          @RequestParam("idPlan") Integer idPlan,
-                          @RequestParam(value = "fechaInicio", required = false) LocalDate fechaInicio,
-                          RedirectAttributes redirectAttributes) {
+            @RequestParam("idPlan") Integer idPlan,
+            @RequestParam(value = "fechaInicio", required = false) LocalDate fechaInicio,
+            RedirectAttributes redirectAttributes) {
         String tipo = "error";
         String mensaje = "form.datos.invalidos";
 
@@ -109,5 +109,16 @@ public class MembresiaController {
         redirectAttributes.addFlashAttribute(tipo, messageSource.getMessage(mensaje, null, Locale.getDefault()));
         return "redirect:/membresia/listado";
     }
-}
 
+    @GetMapping("/consulta")
+    public String consultarMembresia(
+            @RequestParam("cedulaCliente") String cedulaCliente,
+            Model model) {
+
+        var membresias = membresiaService.getMembresiasPorCliente(cedulaCliente);
+
+        model.addAttribute("membresias", membresias);
+
+        return "membresia/consulta";
+    }
+}
