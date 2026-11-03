@@ -88,14 +88,14 @@ public class RutinaService {
                                  BigDecimal peso, String observaciones) {
 
         Rutina rutina = rutinaRepository.findById(idRutina)
-                .orElseThrow(() -> new IllegalArgumentException("rutina.error.noExiste"));
+                .orElseThrow(() -> new IllegalArgumentException("rutina.error.no.existe"));
 
         Ejercicio ejercicio = ejercicioRepository.findById(idEjercicio)
                 .orElseThrow(() -> new IllegalArgumentException("rutina.error.ejercicio"));
 
         // Series y repeticiones obligatorias y mayores a 0
         if (series == null || series < 1 || repeticiones == null || repeticiones < 1) {
-            throw new IllegalArgumentException("rutina.error.seriesRepeticiones");
+            throw new IllegalArgumentException("rutina.error.series.repeticiones");
         }
 
         // El peso es opcional, pero no puede ser negativo
@@ -106,7 +106,7 @@ public class RutinaService {
         // No se puede repetir el mismo ejercicio en la misma rutina
         for (RutinaEjercicio existente : rutina.getEjercicios()) {
             if (existente.getEjercicio().getIdEjercicio().equals(idEjercicio)) {
-                throw new IllegalArgumentException("rutina.error.ejercicioRepetido");
+                throw new IllegalArgumentException("rutina.error.ejercicio.repetido");
             }
         }
 
@@ -124,7 +124,7 @@ public class RutinaService {
     @Transactional
     public void quitarEjercicio(Integer idRutina, Integer idRutinaEjercicio) {
         Rutina rutina = rutinaRepository.findById(idRutina)
-                .orElseThrow(() -> new IllegalArgumentException("rutina.error.noExiste"));
+                .orElseThrow(() -> new IllegalArgumentException("rutina.error.no.existe"));
 
         rutina.getEjercicios().removeIf(d -> d.getIdRutinaEjercicio().equals(idRutinaEjercicio));
         rutinaRepository.save(rutina);
