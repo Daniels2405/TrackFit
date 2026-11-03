@@ -44,12 +44,12 @@ El sistema distingue **tres niveles de membresía: Standard, Premium y VIP**. Lo
 
 En gimnasios pequeños y medianos es común administrar los servicios con cuadernos, hojas de cálculo y mensajería, lo que genera:
 
-| Área | Dificultad actual |
-|---|---|
-| **Membresías y pagos** | No se sabe en tiempo real quién tiene la membresía vigente, próxima a vencer o vencida; el historial de pagos es poco confiable. |
-| **Reservas y actividades** | Sobreventa de cupos, conflictos de horarios y poco control de asistencia. |
-| **Planes de membresía** | Aplicar manualmente los beneficios y restricciones de cada plan produce errores. |
-| **Rutinas y progreso** | La información vive en papel o mensajes; el cliente no puede consultarla y el entrenador no mantiene un historial organizado. |
+| Área                       | Dificultad actual                                                                                                                |
+| -------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| **Membresías y pagos**     | No se sabe en tiempo real quién tiene la membresía vigente, próxima a vencer o vencida; el historial de pagos es poco confiable. |
+| **Reservas y actividades** | Sobreventa de cupos, conflictos de horarios y poco control de asistencia.                                                        |
+| **Planes de membresía**    | Aplicar manualmente los beneficios y restricciones de cada plan produce errores.                                                 |
+| **Rutinas y progreso**     | La información vive en papel o mensajes; el cliente no puede consultarla y el entrenador no mantiene un historial organizado.    |
 
 TrackFit centraliza y automatiza estos procesos para mejorar el control administrativo y la experiencia de los clientes.
 
@@ -59,12 +59,12 @@ El proyecto nace como propuesta del equipo (no de un cliente específico). Se de
 
 ## 4. Usuarios meta y roles
 
-| Rol | Descripción | Funciones principales |
-|---|---|---|
-| **Administrador** | Responsable de la configuración y administración general. | Gestionar usuarios y roles, crear/modificar planes de membresía, gestionar actividades, consultar información general y generar reportes. |
-| **Encargado de recepción** | Responsable de las operaciones cotidianas con los clientes. | Registrar clientes, gestionar membresías, registrar pagos, consultar reservas y controlar información de clientes. |
-| **Entrenador** | Responsable de rutinas y seguimiento del progreso. | Crear rutinas, asignar ejercicios, registrar observaciones y datos de progreso. |
-| **Cliente** (Standard, Premium o VIP) | Usuario final del gimnasio. | Consultar su membresía y actividades, reservar y cancelar, consultar su rutina y su progreso. |
+| Rol                                   | Descripción                                                 | Funciones principales                                                                                                                     |
+| ------------------------------------- | ----------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| **Administrador**                     | Responsable de la configuración y administración general.   | Gestionar usuarios y roles, crear/modificar planes de membresía, gestionar actividades, consultar información general y generar reportes. |
+| **Encargado de recepción**            | Responsable de las operaciones cotidianas con los clientes. | Registrar clientes, gestionar membresías, registrar pagos, consultar reservas y controlar información de clientes.                        |
+| **Entrenador**                        | Responsable de rutinas y seguimiento del progreso.          | Crear rutinas, asignar ejercicios, registrar observaciones y datos de progreso.                                                           |
+| **Cliente** (Standard, Premium o VIP) | Usuario final del gimnasio.                                 | Consultar su membresía y actividades, reservar y cancelar, consultar su rutina y su progreso.                                             |
 
 En la base de datos los roles son `ADMINISTRADOR`, `RECEPCION`, `ENTRENADOR` y `CLIENTE`.
 
@@ -72,31 +72,31 @@ En la base de datos los roles son `ADMINISTRADOR`, `RECEPCION`, `ENTRENADOR` y `
 
 **Grupo 6**
 
-| Nombre | Usuario de GitHub |
-|---|---|
-| Daniel Barrientos Salas | `@Daniels2405` |
-| Julianna Fonseca Rodríguez | `@julifonsecaa` |
-| John Derek Jensen Arguedas | `@jjensen20153` |
-| Víctor Hugo Mora Badilla | `@vhmora-mb` |
+| Nombre                     | Usuario de GitHub |
+| -------------------------- | ----------------- |
+| Daniel Barrientos Salas    | `@Daniels2405`    |
+| Julianna Fonseca Rodríguez | `@julifonsecaa`   |
+| John Derek Jensen Arguedas | `@jjensen20153`   |
+| Víctor Hugo Mora Badilla   | `@vhmora-mb`      |
 
 **Profesor:** Prof. Wilberth Molina Pérez
 **Curso:** SC-403 Desarrollo de Aplicaciones Web y Patrones
 
 ## 6. Tecnologías utilizadas
 
-| Capa / Tema | Tecnología |
-|---|---|
-| Lenguaje | Java 21 |
-| Framework | Spring Boot 4.1.2 (Spring Web MVC, Spring Data JPA, Bean Validation) |
-| Vistas | HTML5, CSS, JavaScript, Thymeleaf (plantillas y fragmentos) |
-| Interfaz | Bootstrap 5.3.8, Font Awesome 7.3.0, jQuery 4.0.0, Popper 2.11.7 (vía WebJars) |
-| Persistencia | Hibernate/JPA + MySQL 8.0.16 o superior (conector `mysql-connector-j`) |
-| Productividad | Lombok, Spring Boot DevTools |
-| Internacionalización | `messages.properties` (español) y selector de idioma por parámetro `lang` |
-| Almacenamiento de imágenes | Firebase Admin SDK 9.10.0 (dependencia incluida; sin uso aún en el código) |
-| Arquitectura | MVC en capas: Controller, Service, Repository, Domain y vistas |
-| Construcción | Maven (el artefacto generado se llama `app.jar`) |
-| Control de versiones | Git y GitHub (trabajo colaborativo con ramas y pull requests) |
+| Capa / Tema                | Tecnología                                                                     |
+| -------------------------- | ------------------------------------------------------------------------------ |
+| Lenguaje                   | Java 21                                                                        |
+| Framework                  | Spring Boot 4.1.2 (Spring Web MVC, Spring Data JPA, Bean Validation)           |
+| Vistas                     | HTML5, CSS, JavaScript, Thymeleaf (plantillas y fragmentos)                    |
+| Interfaz                   | Bootstrap 5.3.8, Font Awesome 7.3.0, jQuery 4.0.0, Popper 2.11.7 (vía WebJars) |
+| Persistencia               | Hibernate/JPA + MySQL 8.0.16 o superior (conector `mysql-connector-j`)         |
+| Productividad              | Lombok, Spring Boot DevTools                                                   |
+| Internacionalización       | `messages.properties` (español) y selector de idioma por parámetro `lang`      |
+| Almacenamiento de imágenes | Firebase Admin SDK 9.10.0 (dependencia incluida; sin uso aún en el código)     |
+| Arquitectura               | MVC en capas: Controller, Service, Repository, Domain y vistas                 |
+| Construcción               | Maven (el artefacto generado se llama `app.jar`)                               |
+| Control de versiones       | Git y GitHub (trabajo colaborativo con ramas y pull requests)                  |
 
 ## 7. Organización del repositorio
 
@@ -174,8 +174,6 @@ spring.datasource.username=trackfit_app
 spring.datasource.password=<contraseña definida en creaTablas.sql>
 ```
 
-> **Importante:** no suba al repositorio credenciales reales de una base de datos en la nube. Use variables de entorno (por ejemplo `SPRING_DATASOURCE_URL`, `SPRING_DATASOURCE_USERNAME` y `SPRING_DATASOURCE_PASSWORD`, que Spring Boot reconoce automáticamente) o un archivo local que esté en `.gitignore`.
-
 ### 3. Ejecutar
 
 ```bash
@@ -195,66 +193,66 @@ La aplicación queda disponible en **http://localhost/** (el puerto configurado 
 
 El script carga 2 entrenadores, 1 administrador, 1 encargado de recepción y 15 clientes ficticios, junto con planes, membresías, pagos, actividades, horarios, reservas, rutinas y registros de progreso.
 
-| Rol | Usuario | Contraseña |
-|---|---|---|
-| Administrador | `admin` | `Admin2026*` |
-| Recepción | `recepcion` | `Recepcion2026*` |
-| Entrenador | `maria.solano`, `andres.campos` | `Entrenador2026*` |
-| Cliente | `carlos.rodriguez` (y los demás clientes) | `Cliente2026*` |
+| Rol           | Usuario                                   | Contraseña        |
+| ------------- | ----------------------------------------- | ----------------- |
+| Administrador | `admin`                                   | `Admin2026*`      |
+| Recepción     | `recepcion`                               | `Recepcion2026*`  |
+| Entrenador    | `maria.solano`, `andres.campos`           | `Entrenador2026*` |
+| Cliente       | `carlos.rodriguez` (y los demás clientes) | `Cliente2026*`    |
 
 > Estas cuentas son ficticias y están almacenadas con BCrypt en el script. **Todavía no hay pantalla de inicio de sesión**, por lo que hoy no se utilizan para entrar al sistema (ver [pendientes](#13-pendientes-y-limitaciones-conocidas)).
 
 ### Rutas principales
 
-| Ruta | Módulo |
-|---|---|
-| `/` | Panel de inicio con totales de planes, clientes, membresías y usuarios |
-| `/usuario/listado` | Usuarios y roles |
-| `/cliente/listado` | Clientes |
-| `/plan/listado` | Planes de membresía y sus beneficios |
-| `/membresia/listado`, `/membresia/consulta` | Asignación y consulta de membresías |
-| `/pago/listado` | Registro e historial de pagos |
-| `/actividad/listado` | Actividades |
-| `/horario/listado` | Horarios y cupos |
-| `/reserva/disponibles` | Consulta de actividades disponibles y reservas |
-| `/rutina/listado`, `/rutina/mi-rutina` | Rutinas (entrenador) y consulta de rutina (cliente) |
+| Ruta                                        | Módulo                                                                 |
+| ------------------------------------------- | ---------------------------------------------------------------------- |
+| `/`                                         | Panel de inicio con totales de planes, clientes, membresías y usuarios |
+| `/usuario/listado`                          | Usuarios y roles                                                       |
+| `/cliente/listado`                          | Clientes                                                               |
+| `/plan/listado`                             | Planes de membresía y sus beneficios                                   |
+| `/membresia/listado`, `/membresia/consulta` | Asignación y consulta de membresías                                    |
+| `/pago/listado`                             | Registro e historial de pagos                                          |
+| `/actividad/listado`                        | Actividades                                                            |
+| `/horario/listado`                          | Horarios y cupos                                                       |
+| `/reserva/disponibles`                      | Consulta de actividades disponibles y reservas                         |
+| `/rutina/listado`, `/rutina/mi-rutina`      | Rutinas (entrenador) y consulta de rutina (cliente)                    |
 
 ## 10. Estado de las historias de usuario
 
-| ID | Historia | Prioridad | Estado |
-|---|---|---|---|
-| HU01 | Registrar usuarios del sistema | Alta | Implementada |
-| HU02 | Iniciar sesión | Alta | Pendiente |
-| HU03 | Registrar y actualizar clientes | Alta | Implementada |
-| HU04 | Crear y modificar planes de membresía | Alta | Implementada (incluye beneficios del plan) |
-| HU05 | Asignar membresía a un cliente | Alta | Implementada |
-| HU06 | Consultar estado y vencimiento de la membresía | Alta | Implementada |
-| HU07 | Registrar pagos de membresías | Alta | Implementada |
-| HU08 | Consultar historial de pagos | Media | Implementada (listado general de pagos) |
-| HU09 | Crear actividades y clases | Alta | Implementada |
-| HU10 | Establecer horarios y cupos máximos | Alta | Implementada |
-| HU11 | Consultar actividades disponibles | Alta | Implementada (filtra por plan y anticipación) |
-| HU12 | Reservar un espacio en una actividad | Alta | Implementada |
-| HU13 | Cancelar una reserva | Media | Pendiente (no hay acción de cancelar) |
-| HU14 | Consultar inscritos en una actividad | Media | Pendiente |
-| HU15 | Crear rutinas de entrenamiento | Alta | Implementada |
-| HU16 | Consultar rutina de entrenamiento | Alta | Implementada |
-| HU17 | Registrar datos de progreso | Media | Pendiente (existe la tabla `progreso`, sin entidad ni pantallas) |
-| HU18 | Consultar historial de progreso | Media | Pendiente |
-| HU19 | Reportes de membresías, pagos y reservas | Media | Pendiente |
-| HU20 | Control de permisos según el rol | Alta | Pendiente |
+| ID   | Historia                                       | Prioridad | Estado                                                           |
+| ---- | ---------------------------------------------- | --------- | ---------------------------------------------------------------- |
+| HU01 | Registrar usuarios del sistema                 | Alta      | Implementada                                                     |
+| HU02 | Iniciar sesión                                 | Alta      | Pendiente                                                        |
+| HU03 | Registrar y actualizar clientes                | Alta      | Implementada                                                     |
+| HU04 | Crear y modificar planes de membresía          | Alta      | Implementada (incluye beneficios del plan)                       |
+| HU05 | Asignar membresía a un cliente                 | Alta      | Implementada                                                     |
+| HU06 | Consultar estado y vencimiento de la membresía | Alta      | Implementada                                                     |
+| HU07 | Registrar pagos de membresías                  | Alta      | Implementada                                                     |
+| HU08 | Consultar historial de pagos                   | Media     | Implementada (listado general de pagos)                          |
+| HU09 | Crear actividades y clases                     | Alta      | Implementada                                                     |
+| HU10 | Establecer horarios y cupos máximos            | Alta      | Implementada                                                     |
+| HU11 | Consultar actividades disponibles              | Alta      | Implementada (filtra por plan y anticipación)                    |
+| HU12 | Reservar un espacio en una actividad           | Alta      | Implementada                                                     |
+| HU13 | Cancelar una reserva                           | Media     | Pendiente (no hay acción de cancelar)                            |
+| HU14 | Consultar inscritos en una actividad           | Media     | Pendiente                                                        |
+| HU15 | Crear rutinas de entrenamiento                 | Alta      | Implementada                                                     |
+| HU16 | Consultar rutina de entrenamiento              | Alta      | Implementada                                                     |
+| HU17 | Registrar datos de progreso                    | Media     | Pendiente (existe la tabla `progreso`, sin entidad ni pantallas) |
+| HU18 | Consultar historial de progreso                | Media     | Pendiente                                                        |
+| HU19 | Reportes de membresías, pagos y reservas       | Media     | Pendiente                                                        |
+| HU20 | Control de permisos según el rol               | Alta      | Pendiente                                                        |
 
 ## 11. Modelo de datos
 
 El esquema `trackfit` (MySQL, `utf8mb4`) contiene 16 tablas agrupadas por módulo:
 
-| Módulo | Tablas |
-|---|---|
-| Seguridad | `rol`, `usuario`, `usuario_rol` |
-| Membresías y pagos | `plan_membresia`, `plan_beneficio`, `membresia`, `pago` |
-| Actividades y reservas | `actividad`, `actividad_plan`, `horario`, `reserva` |
-| Entrenamiento | `ejercicio`, `rutina`, `rutina_ejercicio`, `progreso` |
-| Marketing (opcional) | `promocion` |
+| Módulo                 | Tablas                                                  |
+| ---------------------- | ------------------------------------------------------- |
+| Seguridad              | `rol`, `usuario`, `usuario_rol`                         |
+| Membresías y pagos     | `plan_membresia`, `plan_beneficio`, `membresia`, `pago` |
+| Actividades y reservas | `actividad`, `actividad_plan`, `horario`, `reserva`     |
+| Entrenamiento          | `ejercicio`, `rutina`, `rutina_ejercicio`, `progreso`   |
+| Marketing (opcional)   | `promocion`                                             |
 
 Relaciones principales:
 
