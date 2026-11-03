@@ -1,0 +1,236 @@
+<!-- Fragmento #1: Barra de búsqueda, botón de nuevo cliente y Modal de Formulario -->
+<section th:fragment="botonCrear">
+    <div class="container mb-4">
+        <div class="row g-3 align-items-center justify-content-between">
+            <!-- Botón de nuevo cliente -->
+            <div class="col-md-4">
+                <button type="button"
+                        class="btn btn-primary px-4 py-2 shadow-sm"
+                        data-bs-toggle="modal"
+                        data-bs-target="#clienteModal"
+                        data-modo="agregar">
+                    <i class="fa-solid fa-user-plus me-1"></i> [[#{cliente.agregar}]]
+                </button>
+            </div>
+
+            <!-- Buscador rápido para recepción -->
+            <div class="col-md-6 col-lg-5">
+                <form method="get" th:action="@{/cliente/listado}" class="d-flex gap-2">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0">
+                            <i class="fa-solid fa-magnifying-glass text-muted"></i>
+                        </span>
+                        <input type="text"
+                               name="filtro"
+                               th:value="${filtro}"
+                               class="form-control border-start-0"
+                               th:placeholder="#{cliente.buscar.placeholder}"/>
+                        <button type="submit" class="btn btn-primary">
+                            [[#{accion.buscar}]]
+                        </button>
+                        <a th:if="${filtro != null and !filtro.isBlank()}"
+                           th:href="@{/cliente/listado}"
+                           class="btn btn-outline-secondary"
+                           th:title="#{cliente.buscar.limpiar}">
+                            <i class="fa-solid fa-xmark"></i>
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Crear o Editar Cliente -->
+    <div class="modal fade" id="clienteModal" tabindex="-1" aria-hidden="true"
+         th:data-titulo-agregar="#{cliente.agregar}"
+         th:data-titulo-editar="#{cliente.editar}">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content rounded-4 shadow">
+                <form id="clienteForm" method="post" th:action="@{/cliente/guardar}">
+                    <input type="hidden" id="clienteModoEdicion" name="modoEdicion" value="false"/>
+
+                    <div class="modal-header bg-dark text-white rounded-top-4">
+                        <h5 class="modal-title fw-bold" id="clienteModalTitulo">
+                            <i class="fa-solid fa-user text-warning me-2"></i> [[#{cliente.agregar}]]
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <div class="modal-body p-4">
+                        <!-- Fila 1: Cédula, Username y Contraseña inicial -->
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-4">
+                                <label for="clienteCedula" class="form-label fw-semibold">[[#{cliente.cedula}]] *</label>
+                                <input type="text" id="clienteCedula" name="cedula" class="form-control" maxlength="20" placeholder="200000001" required/>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="clienteUsername" class="form-label fw-semibold">[[#{cliente.username}]] *</label>
+                                <input type="text" id="clienteUsername" name="username" class="form-control" maxlength="30" placeholder="carlos.rodriguez" required/>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="clientePassword" class="form-label fw-semibold">[[#{cliente.password.inicial}]] *</label>
+                                <input type="password" id="clientePassword" name="password" class="form-control" maxlength="512" placeholder="********" required/>
+                                <small id="clientePasswordHelp" class="text-muted d-none small">[[#{usuario.password.ayuda.edicion}]]</small>
+                            </div>
+                        </div>
+
+                        <!-- Fila 2: Nombre y Apellidos -->
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-4">
+                                <label for="clienteNombre" class="form-label fw-semibold">[[#{cliente.nombre}]] *</label>
+                                <input type="text" id="clienteNombre" name="nombre" class="form-control" maxlength="30" required/>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="clienteApellido1" class="form-label fw-semibold">[[#{cliente.apellido1}]] *</label>
+                                <input type="text" id="clienteApellido1" name="apellido1" class="form-control" maxlength="30" required/>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="clienteApellido2" class="form-label fw-semibold">[[#{cliente.apellido2}]]</label>
+                                <input type="text" id="clienteApellido2" name="apellido2" class="form-control" maxlength="30"/>
+                            </div>
+                        </div>
+
+                        <!-- Fila 3: Correo y Teléfono -->
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-7">
+                                <label for="clienteCorreo" class="form-label fw-semibold">[[#{cliente.correo}]] *</label>
+                                <input type="email" id="clienteCorreo" name="correo" class="form-control" maxlength="75" placeholder="socio@gmail.com" required/>
+                            </div>
+                            <div class="col-md-5">
+                                <label for="clienteTelefono" class="form-label fw-semibold">[[#{cliente.telefono}]]</label>
+                                <input type="text" id="clienteTelefono" name="telefono" class="form-control" maxlength="25" placeholder="8800-0001"/>
+                            </div>
+                        </div>
+
+                        <!-- Estado activo -->
+                        <div class="form-check form-switch mt-3">
+                            <input type="checkbox" id="clienteActivo" name="activo" class="form-check-input" checked/>
+                            <label class="form-check-label fw-semibold" for="clienteActivo">[[#{cliente.estado}]] [[#{general.activo}]]</label>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer bg-light rounded-bottom-4">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="fa-solid fa-xmark me-1"></i> [[#{accion.cerrar}]]
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fa-solid fa-floppy-disk me-1"></i> [[#{accion.guardar}]]
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Fragmento #2: Tabla de Socios / Clientes de Recepción -->
+<section th:fragment="listado">
+    <div class="container">
+        <div class="row g-4">
+            <!-- Tabla principal de socios -->
+            <div class="col-lg-9">
+                <div class="card p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold text-dark mb-0">
+                            <i class="fa-solid fa-address-book text-primary me-2"></i> [[#{cliente.listado}]]
+                        </h5>
+                    </div>
+
+                    <div th:if="${clientes != null and !clientes.empty}" class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th>[[#{cliente.cedula}]]</th>
+                                    <th>[[#{usuario.nombre.completo}]]</th>
+                                    <th>[[#{cliente.username}]]</th>
+                                    <th>[[#{cliente.correo}]]</th>
+                                    <th>[[#{cliente.telefono}]]</th>
+                                    <th>[[#{cliente.estado}]]</th>
+                                    <th class="text-end">[[#{accion.acciones}]]</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="c : ${clientes}">
+                                    <td class="fw-bold" th:text="${c.cedula}">200000001</td>
+                                    <td th:text="${c.nombreCompleto}">Carlos Rodríguez Mora</td>
+                                    <td>
+                                        <span class="badge bg-light text-dark border">
+                                            <i class="fa-regular fa-user text-muted me-1"></i>[[${c.username}]]
+                                        </span>
+                                    </td>
+                                    <td class="small" th:text="${c.correo}">carlos@gmail.com</td>
+                                    <td class="small" th:text="${c.telefono != null ? c.telefono : '-'}">8800-0001</td>
+                                    <td>
+                                        <span class="badge rounded-pill"
+                                              th:classappend="${c.activo} ? 'bg-success' : 'bg-secondary'"
+                                              th:text="${c.activo} ? #{general.activo} : #{general.inactivo}">
+                                            Activo
+                                        </span>
+                                    </td>
+                                    <td class="text-end text-nowrap">
+                                        <!-- Alternar Activar/Desactivar -->
+                                        <form method="post" th:action="@{/cliente/cambiar-estado}" class="d-inline">
+                                            <input type="hidden" name="cedula" th:value="${c.cedula}"/>
+                                            <button type="submit" class="btn btn-sm btn-outline-secondary"
+                                                    th:title="${c.activo} ? #{accion.desactivar} : #{accion.activar}">
+                                                <i class="fa-solid" th:classappend="${c.activo} ? 'fa-toggle-on text-success fs-5' : 'fa-toggle-off text-muted fs-5'"></i>
+                                            </button>
+                                        </form>
+
+                                        <!-- Editar Cliente -->
+                                        <button type="button"
+                                                class="btn btn-sm btn-outline-primary"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#clienteModal"
+                                                data-modo="editar"
+                                                th:data-cedula="${c.cedula}"
+                                                th:data-username="${c.username}"
+                                                th:data-nombre="${c.nombre}"
+                                                th:data-apellido1="${c.apellido1}"
+                                                th:data-apellido2="${c.apellido2}"
+                                                th:data-correo="${c.correo}"
+                                                th:data-telefono="${c.telefono}"
+                                                th:data-activo="${c.activo}"
+                                                th:title="#{accion.editar}">
+                                            <i class="fa-solid fa-pen-to-square"></i>
+                                        </button>
+
+                                        <!-- Eliminar Cliente -->
+                                        <button type="button"
+                                                class="btn btn-sm btn-outline-danger"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#confirmModal"
+                                                th:data-bs-id="${c.cedula}"
+                                                th:data-bs-descripcion="${c.nombreCompleto + ' (' + c.cedula + ')'}"
+                                                th:data-bs-action="@{/cliente/eliminar}"
+                                                    data-bs-param="cedula"
+                                                th:title="#{accion.eliminar}">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div th:if="${clientes == null or clientes.empty}" class="text-center p-4 text-muted">
+                        <i class="fa-solid fa-user-xmark fs-2 mb-2 text-secondary"></i>
+                        <p class="mb-0">[[#{cliente.lista.vacia}]]</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tarjeta lateral con totalizador -->
+            <div class="col-lg-3">
+                <div class="card card-total p-4 text-center border-0 shadow-sm text-white">
+                    <div class="card-body py-2">
+                        <i class="fa-solid fa-users display-5 text-warning mb-2"></i>
+                        <h6 class="text-uppercase tracking-wider text-white-50 small mb-1">[[#{cliente.total}]]</h6>
+                        <h2 class="display-5 fw-bold mb-0" th:text="${totalClientes}">0</h2>
+                        <small class="text-white-50 mt-1 d-block">[[#{cliente.total.detalle}]]</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

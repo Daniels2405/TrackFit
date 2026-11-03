@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+    <!-- Incluye los estilos generales de TrackFit -->
+    <head th:replace="~{general/fragmentos :: head}"></head>
+
+    <body>
+
+        <!-- Muestra el encabezado del sistema -->
+        <header th:replace="~{general/fragmentos :: header}"></header>
+
+        <main class="container mt-4 mb-5">
+
+            <h2 class="mb-4">Administración de actividades</h2>
+
+            <!-- Mensaje cuando la actividad se registra correctamente -->
+            <div th:if="${todoOk}" class="alert alert-success">
+                <span th:text="${todoOk}"></span>
+            </div>
+
+            <!-- Mensaje cuando ocurre un error -->
+            <div th:if="${error}" class="alert alert-danger">
+                <span th:text="${error}"></span>
+            </div>
+
+            <!-- Formulario para registrar una nueva actividad -->
+            <div class="card shadow-sm mb-4">
+
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">Registrar nueva actividad</h5>
+                </div>
+
+                <div class="card-body">
+
+                    <form th:action="@{/actividad/guardar}"
+                          method="post">
+
+                        <!-- Nombre de la actividad -->
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Nombre de la actividad
+                            </label>
+
+                            <input type="text"
+                                   name="nombre"
+                                   class="form-control"
+                                   maxlength="50"
+                                   required>
+                        </div>
+
+                        <!-- Descripción de la actividad -->
+                        <div class="mb-3">
+                            <label class="form-label">Descripción</label>
+
+                            <textarea name="descripcion"
+                                      class="form-control"
+                                      maxlength="255"
+                                      rows="3"></textarea>
+                        </div>
+
+                        <!-- Dirección de la imagen de la actividad -->
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Ruta de la imagen (opcional)
+                            </label>
+
+                            <input type="text"
+                                   name="rutaImagen"
+                                   class="form-control"
+                                   maxlength="1024">
+                        </div>
+
+                        <!-- Botón para guardar la actividad -->
+                        <button type="submit" class="btn btn-primary">
+                            Guardar actividad
+                        </button>
+
+                    </form>
+                </div>
+            </div>
+
+            <!-- Tabla que muestra las actividades registradas -->
+            <h4 class="mb-3">Listado de actividades</h4>
+
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Descripción</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <!-- Recorre las actividades obtenidas de Aiven -->
+                        <tr th:each="a : ${actividades}">
+
+                            <td th:text="${a.idActividad}"></td>
+
+                            <td th:text="${a.nombre}"></td>
+
+                            <td th:text="${a.descripcion}"></td>
+
+                            <!-- Muestra si la actividad está activa -->
+                            <td>
+                                <span th:if="${a.activo}"
+                                      class="badge bg-success">
+                                    Activa
+                                </span>
+
+                                <span th:unless="${a.activo}"
+                                      class="badge bg-danger">
+                                    Inactiva
+                                </span>
+                            </td>
+
+                        </tr>
+
+                        <!-- Mensaje cuando no existen actividades -->
+                        <tr th:if="${#lists.isEmpty(actividades)}">
+                            <td colspan="4" class="text-center">
+                                No hay actividades registradas.
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+
+        </main>
+
+        <!-- Incluye el pie de página de TrackFit -->
+        <footer th:replace="~{general/fragmentos :: footer}"></footer>
+
+    </body>
+</html>

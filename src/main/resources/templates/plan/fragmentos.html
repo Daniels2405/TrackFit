@@ -1,0 +1,209 @@
+<!-- Fragmento #1: Botón para nuevo plan y Modal con formulario unificado -->
+<section th:fragment="botonCrear">
+    <div class="container mb-4">
+        <div class="row align-items-center">
+            <div class="col-md-6 mb-2 mb-md-0">
+                <button type="button"
+                        class="btn btn-primary px-4 py-2 shadow-sm"
+                        data-bs-toggle="modal"
+                        data-bs-target="#planModal"
+                        data-modo="agregar">
+                    <i class="fa-solid fa-plus me-1"></i> [[#{plan.agregar}]]
+                </button>
+            </div>
+            <div class="col-md-6 text-md-end text-muted small">
+                <i class="fa-solid fa-circle-info text-primary me-1"></i>
+                <span>[[#{plan.nota.activos}]]</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Crear o Editar Plan de Membresía -->
+    <div class="modal fade" id="planModal" tabindex="-1" aria-hidden="true"
+         th:data-titulo-agregar="#{plan.agregar}"
+         th:data-titulo-editar="#{plan.editar}">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content rounded-4 shadow">
+                <form id="planForm" method="post" th:action="@{/plan/guardar}">
+                    <div class="modal-header bg-dark text-white rounded-top-4">
+                        <h5 class="modal-title fw-bold" id="planModalTitulo">
+                            <i class="fa-solid fa-layer-group text-warning me-2"></i> [[#{plan.agregar}]]
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body p-4">
+                        <input type="hidden" id="planId" name="idPlan"/>
+
+                        <!-- Nombre del plan -->
+                        <div class="mb-3">
+                            <label for="planNombre" class="form-label fw-semibold">[[#{plan.nombre}]] *</label>
+                            <input type="text" id="planNombre" name="nombre" class="form-control" maxlength="30" th:placeholder="#{plan.nombre.placeholder}" required/>
+                        </div>
+
+                        <!-- Precio y Duración -->
+                        <div class="row g-3 mb-3">
+                            <div class="col-sm-6">
+                                <label for="planPrecio" class="form-label fw-semibold">[[#{plan.precio}]] (₡) *</label>
+                                <input type="number" id="planPrecio" name="precio" min="0" step="0.01" class="form-control" placeholder="25000" required/>
+                            </div>
+                            <div class="col-sm-6">
+                                <label for="planDuracion" class="form-label fw-semibold">[[#{plan.duracion}]] *</label>
+                                <input type="number" id="planDuracion" name="duracionDias" min="1" class="form-control" placeholder="30" required/>
+                            </div>
+                        </div>
+
+                        <!-- Días de anticipación para reservas -->
+                        <div class="mb-3">
+                            <label for="planAnticipacion" class="form-label fw-semibold">[[#{plan.anticipacion}]] *</label>
+                            <input type="number" id="planAnticipacion" name="anticipacionReservaDias" min="0" class="form-control" placeholder="2" required/>
+                        </div>
+
+                        <!-- Beneficios (multilínea) -->
+                        <div class="mb-3">
+                            <label for="planBeneficiosTexto" class="form-label fw-semibold">[[#{plan.beneficios}]]</label>
+                            <textarea id="planBeneficiosTexto" name="beneficiosTexto" rows="4" class="form-control" th:placeholder="#{plan.beneficios.placeholder}"></textarea>
+                            <small class="text-muted d-block mt-1">[[#{plan.beneficios.ayuda}]]</small>
+                        </div>
+
+                        <!-- Estado activo -->
+                        <div class="form-check form-switch mt-2">
+                            <input type="checkbox" id="planActivo" name="activo" class="form-check-input" checked/>
+                            <label class="form-check-label fw-semibold" for="planActivo">[[#{plan.estado}]] [[#{general.activo}]]</label>
+                        </div>
+                    </div>
+                    <div class="modal-footer bg-light rounded-bottom-4">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="fa-solid fa-xmark me-1"></i> [[#{accion.cerrar}]]
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fa-solid fa-floppy-disk me-1"></i> [[#{accion.guardar}]]
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Fragmento #2: Listado de Planes como Tarjetas (Standard, Premium, VIP) -->
+<section th:fragment="listado">
+    <div class="container">
+        <!-- Barra informativa superior con contador -->
+        <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+            <h4 class="fw-bold mb-0 text-dark">
+                <i class="fa-solid fa-cubes text-primary me-2"></i> [[#{plan.catalogo}]]
+            </h4>
+            <span class="badge bg-primary fs-6 px-3 py-2 rounded-pill shadow-sm">
+                [[#{plan.total(${totalPlanes})}]]
+            </span>
+        </div>
+
+        <!-- Grid de Tarjetas de Planes -->
+        <div th:if="${planes != null and !planes.empty}" class="row g-4 align-items-stretch">
+            <div th:each="p : ${planes}" class="col-lg-4 col-md-6 d-flex">
+                <div class="card card-plan w-100 p-4 d-flex flex-column"
+                     th:classappend="${#strings.containsIgnoreCase(p.nombre, 'premium')} ? 'plan-destacado' : ''">
+
+                    <!-- Insignia para Plan Destacado / Recomendado -->
+                    <span th:if="${#strings.containsIgnoreCase(p.nombre, 'premium')}" class="badge-destacado">
+                        <i class="fa-solid fa-star me-1"></i> [[#{plan.recomendado}]]
+                    </span>
+
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h3 class="fw-bold text-dark mb-0" th:text="${p.nombre}">Standard</h3>
+                        <span class="badge rounded-pill"
+                              th:classappend="${p.activo} ? 'bg-success' : 'bg-secondary'"
+                              th:text="${p.activo} ? #{general.activo} : #{general.inactivo}">
+                            Activo
+                        </span>
+                    </div>
+
+                    <!-- Precio -->
+                    <div class="my-3">
+                        <span class="fs-4 text-primary fw-bold">[[#{general.moneda}]]</span>
+                        <span class="display-6 fw-bold text-primary" th:text="${#numbers.formatDecimal(p.precio, 1, 'POINT', 0, 'POINT')}">25.000</span>
+                        <span class="text-muted small">[[#{plan.mensual}]]</span>
+                    </div>
+
+                    <!-- Métricas del plan -->
+                    <div class="d-flex gap-2 flex-wrap mb-3">
+                        <span class="badge bg-light text-dark border">
+                            <i class="fa-regular fa-clock text-primary me-1"></i> [[#{plan.duracion.dias(${p.duracionDias})}]]
+                        </span>
+                        <span class="badge bg-light text-dark border">
+                            <i class="fa-solid fa-calendar-check text-primary me-1"></i> [[#{plan.anticipacion.corto(${p.anticipacionReservaDias})}]]
+                        </span>
+                    </div>
+
+                    <hr class="my-2 opacity-25"/>
+
+                    <!-- Lista de Beneficios -->
+                    <div class="flex-grow-1 my-3">
+                        <h6 class="text-uppercase fw-bold small text-muted mb-2">[[#{plan.beneficios.incluidos}]]</h6>
+                        <ul th:if="${p.beneficios != null and !p.beneficios.empty}" class="list-unstyled mb-0">
+                            <li th:each="b : ${p.beneficios}" class="mb-2 small d-flex align-items-start">
+                                <i class="fa-solid fa-check text-success me-2 mt-1"></i>
+                                <span th:text="${b.descripcion}">Beneficio del plan</span>
+                            </li>
+                        </ul>
+                        <p th:if="${p.beneficios == null or p.beneficios.empty}" class="text-muted small fst-italic mb-0">
+                            [[#{plan.sin.beneficios}]]
+                        </p>
+                    </div>
+
+                    <!-- Construcción de texto de beneficios para edición en modal -->
+                    <th:block th:with="textoBeneficiosConcat=${p.beneficios != null ? #strings.listJoin(p.beneficios.![descripcion], '&#10;') : ''}">
+                        <!-- Acciones al pie de la tarjeta -->
+                        <div class="pt-3 border-top d-flex gap-2 justify-content-end align-items-center">
+                            <!-- Alternar Activar/Desactivar -->
+                            <form method="post" th:action="@{/plan/cambiar-estado}" class="d-inline">
+                                <input type="hidden" name="idPlan" th:value="${p.idPlan}"/>
+                                <button type="submit" class="btn btn-sm btn-outline-secondary"
+                                        th:title="${p.activo} ? #{accion.desactivar} : #{accion.activar}">
+                                    <i class="fa-solid" th:classappend="${p.activo} ? 'fa-toggle-on text-success fs-5' : 'fa-toggle-off text-muted fs-5'"></i>
+                                </button>
+                            </form>
+
+                            <!-- Editar -->
+                            <button type="button"
+                                    class="btn btn-sm btn-outline-primary"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#planModal"
+                                    data-modo="editar"
+                                    th:data-titulo="#{plan.editar}"
+                                    th:data-id="${p.idPlan}"
+                                    th:data-nombre="${p.nombre}"
+                                    th:data-precio="${p.precio}"
+                                    th:data-duracion="${p.duracionDias}"
+                                    th:data-anticipacion="${p.anticipacionReservaDias}"
+                                    th:data-beneficios="${textoBeneficiosConcat}"
+                                    th:data-activo="${p.activo}">
+                                <i class="fa-solid fa-pen-to-square me-1"></i> [[#{accion.editar}]]
+                            </button>
+
+                            <!-- Eliminar -->
+                            <button type="button"
+                                    class="btn btn-sm btn-outline-danger"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#confirmModal"
+                                    th:data-bs-id="${p.idPlan}"
+                                    th:data-bs-descripcion="${p.nombre}"
+                                    th:data-bs-action="@{/plan/eliminar}"
+                                                    data-bs-param="idPlan">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    </th:block>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Mensaje si no hay planes registrados -->
+        <div th:if="${planes == null or planes.empty}" class="card p-5 text-center text-muted">
+            <i class="fa-solid fa-box-open fs-1 mb-3 text-secondary"></i>
+            <h5>[[#{lista.vacia}]]</h5>
+            <p class="small">[[#{plan.lista.vacia.ayuda}]]</p>
+        </div>
+    </div>
+</section>

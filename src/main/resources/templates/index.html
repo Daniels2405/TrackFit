@@ -1,15 +1,170 @@
 <!DOCTYPE html>
-<!--
-Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
-Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
--->
-<html>
-    <head>
-        <title>TODO supply a title</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    </head>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://thymeleaf.org"
+      xmlns:sec="http://thymeleaf.org/thymeleaf-extras-springsecurity6">
+    <head th:replace="~{general/fragmentos :: head}"></head>
     <body>
-        <div>TODO write content</div>
+        <header th:replace="~{general/fragmentos :: header}"></header>
+
+        <!-- Banner Principal de Bienvenida -->
+        <section class="main-header py-5 mb-5 shadow-sm text-center">
+            <div class="container py-3">
+                <div class="d-inline-flex align-items-center justify-content-center p-3 rounded-circle bg-white bg-opacity-10 mb-3 text-warning">
+                    <i class="fa-solid fa-dumbbell display-4"></i>
+                </div>
+                <h1 class="display-5 fw-bold mb-2">Track<span class="text-warning">Fit</span></h1>
+                <p class="lead text-white-50 max-w-600 mx-auto mb-0">[[#{aplicacion.eslogan}]] · [[#{index.subtitulo}]]</p>
+            </div>
+        </section>
+
+        <div class="container mb-5">
+            <!-- Tarjetas de Métricas Rápidas -->
+            <div class="row g-4 mb-5">
+                <div class="col-sm-6 col-lg-3">
+                    <div class="card p-3 border-0 shadow-sm h-100">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="p-3 rounded-4 bg-primary bg-opacity-10 text-primary fs-3">
+                                <i class="fa-solid fa-users"></i>
+                            </div>
+                            <div>
+                                <small class="text-muted fw-semibold">[[#{index.metrica.clientes}]]</small>
+                                <h3 class="fw-bold mb-0 text-dark" th:text="${totalClientes}">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6 col-lg-3">
+                    <div class="card p-3 border-0 shadow-sm h-100">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="p-3 rounded-4 bg-success bg-opacity-10 text-success fs-3">
+                                <i class="fa-solid fa-id-card"></i>
+                            </div>
+                            <div>
+                                <small class="text-muted fw-semibold">[[#{menu.membresias}]]</small>
+                                <h3 class="fw-bold mb-0 text-dark" th:text="${totalMembresias}">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6 col-lg-3">
+                    <div class="card p-3 border-0 shadow-sm h-100">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="p-3 rounded-4 bg-warning bg-opacity-10 text-warning fs-3">
+                                <i class="fa-solid fa-layer-group"></i>
+                            </div>
+                            <div>
+                                <small class="text-muted fw-semibold">[[#{index.metrica.planes}]]</small>
+                                <h3 class="fw-bold mb-0 text-dark" th:text="${totalPlanes}">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6 col-lg-3">
+                    <div class="card p-3 border-0 shadow-sm h-100">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="p-3 rounded-4 bg-info bg-opacity-10 text-info fs-3">
+                                <i class="fa-solid fa-user-shield"></i>
+                            </div>
+                            <div>
+                                <small class="text-muted fw-semibold">[[#{index.metrica.personal}]]</small>
+                                <h3 class="fw-bold mb-0 text-dark" th:text="${totalUsuarios}">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Módulos de Acceso Rápido por Rol -->
+            <div class="row g-4 mb-5">
+                <!-- Panel de Recepción -->
+                <div class="col-md-6">
+                    <div class="card p-4 h-100 border-start border-4 border-primary">
+                        <div class="d-flex align-items-center gap-2 mb-3">
+                            <span class="badge bg-primary px-3 py-2 rounded-pill">[[#{rol.RECEPCION}]]</span>
+                            <h5 class="fw-bold mb-0 text-dark">[[#{index.recepcion.titulo}]]</h5>
+                        </div>
+                        <p class="text-muted small mb-4">[[#{index.recepcion.texto}]]</p>
+                        <div class="d-flex flex-wrap gap-2 mt-auto">
+                            <a th:href="@{/cliente/listado}" class="btn btn-outline-primary">
+                                <i class="fa-solid fa-users me-1"></i> [[#{index.recepcion.clientes}]]
+                            </a>
+                            <a th:href="@{/membresia/listado}" class="btn btn-primary">
+                                <i class="fa-solid fa-id-card me-1"></i> [[#{index.recepcion.membresias}]]
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Panel de Administración -->
+                <div class="col-md-6">
+                    <div class="card p-4 h-100 border-start border-4 border-warning">
+                        <div class="d-flex align-items-center gap-2 mb-3">
+                            <span class="badge bg-warning text-dark px-3 py-2 rounded-pill">[[#{rol.ADMINISTRADOR}]]</span>
+                            <h5 class="fw-bold mb-0 text-dark">[[#{index.admin.titulo}]]</h5>
+                        </div>
+                        <p class="text-muted small mb-4">[[#{index.admin.texto}]]</p>
+                        <div class="d-flex flex-wrap gap-2 mt-auto">
+                            <a th:href="@{/plan/listado}" class="btn btn-primary">
+                                <i class="fa-solid fa-layer-group me-1"></i> [[#{index.admin.planes}]]
+                            </a>
+                            <a th:href="@{/usuario/listado}" class="btn btn-outline-secondary">
+                                <i class="fa-solid fa-user-shield me-1"></i> [[#{index.admin.usuarios}]]
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vista Previa de Planes Disponibles -->
+            <div class="mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <h4 class="fw-bold mb-1">[[#{index.planes.titulo}]]</h4>
+                        <p class="text-muted small mb-0">[[#{index.planes.subtitulo}]]</p>
+                    </div>
+                    <a th:href="@{/plan/listado}" class="btn btn-sm btn-outline-primary">
+                        [[#{index.planes.catalogo}]] <i class="fa-solid fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+
+                <div th:if="${planesActivos != null and !planesActivos.empty}" class="row g-4 align-items-stretch">
+                    <div th:each="p : ${planesActivos}" class="col-lg-4 col-md-6 d-flex">
+                        <div class="card card-plan w-100 p-4 d-flex flex-column"
+                             th:classappend="${#strings.containsIgnoreCase(p.nombre, 'premium')} ? 'plan-destacado' : ''">
+
+                            <span th:if="${#strings.containsIgnoreCase(p.nombre, 'premium')}" class="badge-destacado">
+                                <i class="fa-solid fa-star me-1"></i> [[#{plan.recomendado}]]
+                            </span>
+
+                            <h4 class="fw-bold text-dark mb-1" th:text="${p.nombre}">Standard</h4>
+                            <div class="my-2">
+                                <span class="fs-5 text-primary fw-bold">[[#{general.moneda}]]</span>
+                                <span class="fs-2 fw-bold text-primary" th:text="${#numbers.formatDecimal(p.precio, 1, 'POINT', 0, 'POINT')}">25.000</span>
+                                <span class="text-muted small">[[#{plan.mensual}]]</span>
+                            </div>
+
+                            <ul th:if="${p.beneficios != null and !p.beneficios.empty}" class="list-unstyled my-3 small flex-grow-1">
+                                <li th:each="b : ${p.beneficios}" class="mb-2 d-flex align-items-start">
+                                    <i class="fa-solid fa-check text-success me-2 mt-1"></i>
+                                    <span th:text="${b.descripcion}">Beneficio</span>
+                                </li>
+                            </ul>
+
+                            <div class="pt-3 border-top mt-auto">
+                                <a th:href="@{/membresia/listado}" class="btn btn-sm btn-outline-primary w-100">
+                                    <i class="fa-solid fa-id-card me-1"></i> [[#{index.planes.asignar}]]
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <section th:replace="~{general/fragmentos :: mostrarToast}"></section>
+        <footer th:replace="~{general/fragmentos :: footer}"></footer>
     </body>
 </html>
