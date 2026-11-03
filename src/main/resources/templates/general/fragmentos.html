@@ -53,6 +53,18 @@
                             <i class="fa-solid fa-users me-1"></i> [[#{menu.clientes}]]
                         </a>
                     </li>
+                                        <!-- Rutinas para Entrenadores (HU15) -->
+                    <li class="nav-item" sec:authorize="hasAnyRole('ADMINISTRADOR','ENTRENADOR')">
+                        <a class="nav-link" th:href="@{/rutina/listado}">
+                            <i class="fa-solid fa-dumbbell me-1"></i> [[#{menu.rutinas}]]
+                        </a>
+                    </li>
+                    <!-- Mi rutina para Clientes (HU16) -->
+                    <li class="nav-item" sec:authorize="hasRole('CLIENTE')">
+                        <a class="nav-link" th:href="@{/rutina/mi-rutina}">
+                            <i class="fa-solid fa-person-running me-1"></i> [[#{rutina.mi.rutina}]]
+                        </a>
+                    </li>
                     <!-- Centro de control para Administradores (HU01 - Usuarios del sistema) -->
                     <li class="nav-item" sec:authorize="hasRole('ADMINISTRADOR')">
                         <a class="nav-link" th:href="@{/usuario/listado}">

@@ -205,3 +205,89 @@
         </div>
     </div>
 </section>
+
+
+<!-- Fragmento #3: Mi rutina, vista del cliente -->
+<section th:fragment="miRutina">
+    <div class="container">
+
+        <!-- Selector temporal "Ver como cliente" (se reemplaza cuando exista el login) -->
+        <div class="card p-3 mb-4 border-warning">
+            <form method="get" th:action="@{/rutina/mi-rutina}" class="row g-2 align-items-center">
+                <div class="col-auto">
+                    <span class="badge bg-warning text-dark">
+                        <i class="fa-solid fa-user-secret me-1"></i> [[#{rutina.ver.como}]]
+                    </span>
+                </div>
+                <div class="col">
+                    <select name="cedula" class="form-select form-select-sm" onchange="this.form.submit()">
+                        <option value="">-- [[#{form.seleccione}]] --</option>
+                        <option th:each="c : ${clientes}"
+                                th:value="${c.cedula}"
+                                th:text="${c.nombreCompleto}"
+                                th:selected="${c.cedula == cedula}">Carlos Rodríguez Mora</option>
+                    </select>
+                </div>
+            </form>
+        </div>
+
+        <!-- Todavía no se ha escogido un cliente -->
+        <div th:if="${cedula == null or cedula.isBlank()}" class="card p-4 text-center text-muted">
+            <p class="mb-0">[[#{rutina.seleccione.cliente}]]</p>
+        </div>
+
+        <!-- El cliente NO tiene rutina -->
+        <div th:if="${cedula != null and !cedula.isBlank() and rutina == null}" class="card p-5 text-center text-muted">
+            <i class="fa-solid fa-clipboard-question fs-1 mb-3 text-secondary"></i>
+            <p class="mb-0">[[#{rutina.sin.rutina}]]</p>
+        </div>
+
+        <!-- El cliente SÍ tiene rutina -->
+        <div th:if="${rutina != null}" class="card p-4">
+
+            <!-- Encabezado -->
+            <div class="d-flex justify-content-between align-items-start mb-3">
+                <div>
+                    <h4 class="fw-bold mb-1" th:text="${rutina.nombre}">Tren Superior</h4>
+                    <small class="text-muted">
+                        <i class="fa-solid fa-user-tie me-1"></i>
+                        [[#{rutina.entrenador}]]: [[${rutina.entrenador.nombreCompleto}]]
+                    </small>
+                </div>
+                <span class="badge rounded-pill bg-success fs-6">[[#{rutina.vigente}]]</span>
+            </div>
+
+            <!-- Indicaciones del entrenador -->
+            <div th:if="${rutina.observaciones != null and !rutina.observaciones.isBlank()}"
+                 class="p-3 bg-light rounded-3 border mb-4">
+                <div class="small fw-semibold text-primary mb-1">
+                    <i class="fa-solid fa-comment-dots me-1"></i> [[#{rutina.observaciones}]]
+                </div>
+                <p class="mb-0" th:text="${rutina.observaciones}">Descansar 60 segundos entre series.</p>
+            </div>
+
+            <!-- Ejercicios como tarjetas -->
+            <h6 class="fw-bold mb-3">[[#{rutina.ejercicios}]]</h6>
+            <p th:if="${rutina.ejercicios.empty}" class="text-muted">[[#{rutina.sin.ejercicios}]]</p>
+
+            <div class="row g-3">
+                <div class="col-md-6" th:each="d, info : ${rutina.ejercicios}">
+                    <div class="border rounded-3 p-3 h-100">
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <span class="badge bg-dark rounded-circle" th:text="${info.count}">1</span>
+                            <span class="fw-bold" th:text="${d.ejercicio.nombre}">Press banca</span>
+                        </div>
+                        <div class="d-flex gap-3 small">
+                            <span><strong th:text="${d.series}">4</strong> [[#{rutina.series}]]</span>
+                            <span><strong th:text="${d.repeticiones}">12</strong> [[#{rutina.repeticiones}]]</span>
+                            <span th:if="${d.peso != null}"><strong th:text="${d.peso}">40</strong> kg</span>
+                        </div>
+                        <small th:if="${d.observaciones != null}" class="text-muted d-block mt-2">
+                            <i class="fa-solid fa-lightbulb text-warning me-1"></i>[[${d.observaciones}]]
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
