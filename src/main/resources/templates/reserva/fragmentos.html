@@ -1,0 +1,123 @@
+<!-- Fragmento #1: Actividades disponibles (HU11), reservar (HU12) y mis reservas -->
+<section th:fragment="disponibles">
+    <div class="container">
+
+        <!-- Selector temporal "Ver como cliente" (se reemplaza cuando exista el login) -->
+        <div class="card p-3 mb-4 border-warning">
+            <form method="get" th:action="@{/reserva/disponibles}" class="row g-2 align-items-center">
+                <div class="col-auto">
+                    <span class="badge bg-warning text-dark">
+                        <i class="fa-solid fa-user-secret me-1"></i> [[#{rutina.ver.como}]]
+                    </span>
+                </div>
+                <div class="col">
+                    <select name="cedula" class="form-select form-select-sm" onchange="this.form.submit()">
+                        <option value="">-- [[#{form.seleccione}]] --</option>
+                        <option th:each="c : ${clientes}"
+                                th:value="${c.cedula}"
+                                th:text="${c.nombreCompleto}"
+                                th:selected="${c.cedula == cedula}">Carlos Rodríguez Mora</option>
+                    </select>
+                </div>
+            </form>
+        </div>
+
+        <th:block th:if="${cedula != null and !cedula.isBlank()}">
+
+            <!-- Sin membresía vigente: no puede ver ni reservar -->
+            <div th:if="${membresia == null}" class="alert alert-danger">
+                <i class="fa-solid fa-circle-exclamation me-1"></i> [[#{membresia.mia.vencida}]]
+            </div>
+
+            <!-- Con membresía vigente -->
+            <th:block th:if="${membresia != null}">
+
+                <!-- Plan del cliente y sus restricciones -->
+                <div class="mb-3">
+                    <span class="badge bg-dark fs-6" th:text="${membresia.planMembresia.nombre}">Premium</span>
+                    <small class="text-muted ms-2">
+                        <i class="fa-solid fa-calendar-days me-1"></i>
+                        [[#{plan.anticipacion.corto(${membresia.planMembresia.anticipacionReservaDias})}]]
+                    </small>
+                </div>
+
+                <!-- No hay actividades para su plan -->
+                <div th:if="${horarios.empty}" class="card p-4 text-center text-muted mb-4">
+                    <p class="mb-0">[[#{disponibles.vacio}]]</p>
+                </div>
+
+                <!-- Tarjetas de horarios disponibles -->
+                <div class="row g-3 mb-5">
+                    <div class="col-md-6 col-lg-4" th:each="h : ${horarios}">
+                        <div class="card h-100 p-3">
+                            <h5 class="fw-bold mb-1" th:text="${h.actividad.nombre}">Yoga</h5>
+                            <p class="small text-muted mb-2" th:text="${h.actividad.descripcion}">Descripción</p>
+
+                            <div class="small mb-1">
+                                <i class="fa-solid fa-calendar text-primary me-1"></i>
+                                [[${#temporals.format(h.fecha, 'dd/MM/yyyy')}]]
+                            </div>
+                            <div class="small mb-3">
+                                <i class="fa-solid fa-clock text-primary me-1"></i>
+                                [[${#temporals.format(h.horaInicio, 'HH:mm')}]] - [[${#temporals.format(h.horaFin, 'HH:mm')}]]
+                            </div>
+
+                            <!-- Espacios disponibles -->
+                            <div class="d-flex justify-content-between align-items-center mt-auto">
+                                <span class="badge rounded-pill"
+                                      th:classappend="${cupos[h.idHorario] > 0} ? 'bg-success' : 'bg-danger'"
+                                      th:text="${cupos[h.idHorario] > 0}
+                                               ? #{horario.cupos.formato(${cupos[h.idHorario]}, ${h.cupoMaximo})}
+                                               : #{horario.lleno}">7/15</span>
+
+                                <!-- Botón Reservar (HU12) -->
+                                <form method="post" th:action="@{/reserva/reservar}">
+                                    <input type="hidden" name="cedula" th:value="${cedula}"/>
+                                    <input type="hidden" name="idHorario" th:value="${h.idHorario}"/>
+                                    <button type="submit" class="btn btn-primary btn-sm"
+                                            th:disabled="${cupos[h.idHorario] <= 0}">
+                                        <i class="fa-solid fa-check me-1"></i> [[#{reserva.reservar}]]
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </th:block>
+
+            <!-- Mis reservas -->
+            <div class="card p-4">
+                <h5 class="fw-bold mb-3">
+                    <i class="fa-solid fa-list-check text-primary me-2"></i> [[#{reserva.mis.reservas}]]
+                </h5>
+
+                <p th:if="${misReservas == null or misReservas.empty}" class="text-muted mb-0">[[#{lista.vacia}]]</p>
+
+                <div th:if="${misReservas != null and !misReservas.empty}" class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>[[#{horario.actividad}]]</th>
+                                <th>[[#{horario.fecha}]]</th>
+                                <th>[[#{horario.hora.inicio}]]</th>
+                                <th>[[#{general.estado}]]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="r : ${misReservas}">
+                                <td class="fw-semibold" th:text="${r.horario.actividad.nombre}">Yoga</td>
+                                <td th:text="${#temporals.format(r.horario.fecha, 'dd/MM/yyyy')}">04/11/2026</td>
+                                <td th:text="${#temporals.format(r.horario.horaInicio, 'HH:mm')}">18:00</td>
+                                <td>
+                                    <span class="badge rounded-pill"
+                                          th:classappend="${r.estado == 'Confirmada'} ? 'bg-success' : 'bg-secondary'"
+                                          th:text="${#messages.msg('reserva.estado.' + r.estado)}">Confirmada</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </th:block>
+    </div>
+</section>
