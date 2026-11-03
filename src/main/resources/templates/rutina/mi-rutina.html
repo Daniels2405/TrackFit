@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://thymeleaf.org">
+    <head th:replace="~{general/fragmentos :: head}"></head>
+    <body>
+        <header th:replace="~{general/fragmentos :: header}"></header>
+
+        <section th:replace="~{general/fragmentos :: titulo('fa-solid fa-person-running', #{rutina.mi.rutina}, #{rutina.titulo})}"></section>
+
+        <section th:replace="~{rutina/fragmentos :: miRutina}"></section>
+
+        <footer th:replace="~{general/fragmentos :: footer}"></footer>
+    </body>
+</html>

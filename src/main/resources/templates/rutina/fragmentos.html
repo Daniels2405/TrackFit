@@ -1,0 +1,293 @@
+<!-- Fragmento #1: Selector de cliente (temporal hasta tener login) -->
+<section th:fragment="selectorCliente">
+    <div class="container mb-4">
+        <div class="card p-4">
+            <form method="get" th:action="@{/rutina/listado}" class="row g-3 align-items-end">
+                <div class="col-md-7">
+                    <label for="selectCliente" class="form-label fw-semibold">[[#{rutina.cliente}]]</label>
+                    <select id="selectCliente" name="cedulaCliente" class="form-select"
+                            onchange="this.form.submit()">
+                        <option value="">-- [[#{form.seleccione}]] --</option>
+                        <option th:each="c : ${clientes}"
+                                th:value="${c.cedula}"
+                                th:text="${c.nombreCompleto + ' (' + c.cedula + ')'}"
+                                th:selected="${c.cedula == cedulaCliente}">
+                            Carlos Rodríguez Mora (200000001)
+                        </option>
+                    </select>
+                </div>
+                <div class="col-md-5 text-muted small">
+                    <i class="fa-solid fa-circle-info text-primary me-1"></i> [[#{rutina.nota.vigente}]]
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+
+<!-- Fragmento #2: Rutina del cliente seleccionado -->
+<section th:fragment="rutinaCliente">
+    <div class="container">
+        <div class="row g-4">
+
+            <div class="col-lg-8">
+                <div class="card p-4">
+
+                    <!-- Si el cliente NO tiene rutina -->
+                    <div th:if="${rutinaVigente == null}" class="text-center p-4 text-muted">
+                        <i class="fa-solid fa-clipboard-list fs-2 mb-2 text-secondary"></i>
+                        <p class="mb-0">[[#{rutina.sin.rutina}]]</p>
+                    </div>
+
+                    <!-- Si SÍ tiene rutina -->
+                    <div th:if="${rutinaVigente != null}">
+
+                        <!-- Encabezado: nombre, entrenador y estado -->
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div>
+                                <h5 class="fw-bold mb-1" th:text="${rutinaVigente.nombre}">Tren Superior</h5>
+                                <small class="text-muted">
+                                    [[#{rutina.entrenador}]]: [[${rutinaVigente.entrenador.nombreCompleto}]]
+                                </small>
+                            </div>
+                            <span class="badge rounded-pill bg-success">[[#{rutina.vigente}]]</span>
+                        </div>
+
+                        <!-- Indicaciones generales del entrenador -->
+                        <p th:if="${rutinaVigente.observaciones != null and !rutinaVigente.observaciones.isBlank()}"
+                           class="p-3 bg-light rounded-3 border small mb-3">
+                            <i class="fa-solid fa-comment-dots text-primary me-1"></i>
+                            [[${rutinaVigente.observaciones}]]
+                        </p>
+
+                        <!-- Tabla de ejercicios -->
+                        <div th:if="${!rutinaVigente.ejercicios.empty}" class="table-responsive mb-4">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>[[#{rutina.ejercicio}]]</th>
+                                        <th>[[#{rutina.series}]]</th>
+                                        <th>[[#{rutina.repeticiones}]]</th>
+                                        <th>[[#{rutina.peso}]]</th>
+                                        <th class="text-end">[[#{accion.acciones}]]</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="d : ${rutinaVigente.ejercicios}">
+                                        <td>
+                                            <div class="fw-semibold" th:text="${d.ejercicio.nombre}">Press banca</div>
+                                            <small class="text-muted" th:text="${d.observaciones}">Controlar la bajada</small>
+                                        </td>
+                                        <td th:text="${d.series}">4</td>
+                                        <td th:text="${d.repeticiones}">12</td>
+                                        <td th:text="${d.peso != null ? d.peso : '-'}">40</td>
+                                        <td class="text-end">
+                                            <form method="post" th:action="@{/rutina/quitarEjercicio}" class="d-inline">
+                                                <input type="hidden" name="cedulaCliente" th:value="${cedulaCliente}"/>
+                                                <input type="hidden" name="idRutina" th:value="${rutinaVigente.idRutina}"/>
+                                                <input type="hidden" name="idRutinaEjercicio" th:value="${d.idRutinaEjercicio}"/>
+                                                <button type="submit" class="btn btn-sm btn-outline-danger" th:title="#{accion.eliminar}">
+                                                    <i class="fa-solid fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <p th:if="${rutinaVigente.ejercicios.empty}" class="text-muted small">[[#{rutina.sin.ejercicios}]]</p>
+
+                        <!-- Formulario para agregar un ejercicio -->
+                        <h6 class="fw-bold mt-2 mb-3">
+                            <i class="fa-solid fa-plus text-primary me-1"></i> [[#{accion.agregar}]] [[#{rutina.ejercicio}]]
+                        </h6>
+                        <form method="post" th:action="@{/rutina/agregarEjercicio}" class="row g-2 align-items-end">
+                            <input type="hidden" name="cedulaCliente" th:value="${cedulaCliente}"/>
+                            <input type="hidden" name="idRutina" th:value="${rutinaVigente.idRutina}"/>
+
+                            <div class="col-md-4">
+                                <label class="form-label small fw-semibold">[[#{rutina.ejercicio}]] *</label>
+                                <select name="idEjercicio" class="form-select" required>
+                                    <option value="">-- [[#{form.seleccione}]] --</option>
+                                    <option th:each="e : ${ejercicios}"
+                                            th:value="${e.idEjercicio}"
+                                            th:text="${e.nombre}">Sentadilla</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label small fw-semibold">[[#{rutina.series}]] *</label>
+                                <input type="number" name="series" class="form-control" min="1" required/>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label small fw-semibold">[[#{rutina.repeticiones}]] *</label>
+                                <input type="number" name="repeticiones" class="form-control" min="1" required/>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label small fw-semibold">[[#{rutina.peso}]]</label>
+                                <input type="number" name="peso" class="form-control" min="0" step="0.01"/>
+                            </div>
+                            <div class="col-md-2 d-grid">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fa-solid fa-plus"></i>
+                                </button>
+                            </div>
+                            <div class="col-12">
+                                <input type="text" name="observaciones" class="form-control form-control-sm"
+                                       maxlength="255" th:placeholder="#{rutina.observaciones} + ' ' + #{general.opcional}"/>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== Columna derecha: crear rutina + historial ===== -->
+            <div class="col-lg-4">
+
+                <!-- Formulario para crear una rutina nueva (HU15) -->
+                <div class="card p-4 mb-4">
+                    <h6 class="fw-bold mb-3">
+                        <i class="fa-solid fa-clipboard-list text-primary me-1"></i> [[#{rutina.crear}]]
+                    </h6>
+                    <form method="post" th:action="@{/rutina/crear}">
+                        <input type="hidden" name="cedulaCliente" th:value="${cedulaCliente}"/>
+
+                        <div class="mb-3">
+                            <label for="selectEntrenador" class="form-label small fw-semibold">[[#{rutina.entrenador}]] *</label>
+                            <select id="selectEntrenador" name="cedulaEntrenador" class="form-select" required>
+                                <option value="">-- [[#{form.seleccione}]] --</option>
+                                <option th:each="en : ${entrenadores}"
+                                        th:value="${en.cedula}"
+                                        th:text="${en.nombreCompleto}">Andrés Campos Rivera</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="inputNombre" class="form-label small fw-semibold">[[#{rutina.nombre}]] *</label>
+                            <input type="text" id="inputNombre" name="nombre" class="form-control"
+                                   maxlength="50" th:placeholder="#{rutina.nombre.placeholder}" required/>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="inputObservaciones" class="form-label small fw-semibold">
+                                [[#{rutina.observaciones}]] <span class="text-muted">[[#{general.opcional}]]</span>
+                            </label>
+                            <textarea id="inputObservaciones" name="observaciones" class="form-control"
+                                      rows="3" maxlength="500"></textarea>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fa-solid fa-floppy-disk me-1"></i> [[#{accion.guardar}]]
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Historial de rutinas del cliente -->
+                <div class="card p-4" th:if="${rutinas != null and !rutinas.empty}">
+                    <h6 class="fw-bold mb-3">
+                        <i class="fa-solid fa-clock-rotate-left text-primary me-1"></i> [[#{rutina.listado}]]
+                    </h6>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item px-0 d-flex justify-content-between align-items-center"
+                            th:each="r : ${rutinas}">
+                            <div>
+                                <div class="fw-semibold small" th:text="${r.nombre}">Tren Superior</div>
+                                <small class="text-muted" th:text="${r.entrenador.nombreCompleto}">Andrés Campos</small>
+                            </div>
+                            <span class="badge rounded-pill"
+                                  th:classappend="${r.activa} ? 'bg-success' : 'bg-secondary'"
+                                  th:text="${r.activa} ? #{rutina.vigente} : #{rutina.anterior}">Vigente</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- Fragmento #3: Mi rutina, vista del cliente -->
+<section th:fragment="miRutina">
+    <div class="container">
+
+        <!-- Selector temporal "Ver como cliente" (se reemplaza cuando exista el login) -->
+        <div class="card p-3 mb-4 border-warning">
+            <form method="get" th:action="@{/rutina/mi-rutina}" class="row g-2 align-items-center">
+                <div class="col-auto">
+                    <span class="badge bg-warning text-dark">
+                        <i class="fa-solid fa-user-secret me-1"></i> [[#{rutina.ver.como}]]
+                    </span>
+                </div>
+                <div class="col">
+                    <select name="cedula" class="form-select form-select-sm" onchange="this.form.submit()">
+                        <option value="">-- [[#{form.seleccione}]] --</option>
+                        <option th:each="c : ${clientes}"
+                                th:value="${c.cedula}"
+                                th:text="${c.nombreCompleto}"
+                                th:selected="${c.cedula == cedula}">Carlos Rodríguez Mora</option>
+                    </select>
+                </div>
+            </form>
+        </div>
+
+        <!-- Todavía no se ha escogido un cliente -->
+        <div th:if="${cedula == null or cedula.isBlank()}" class="card p-4 text-center text-muted">
+            <p class="mb-0">[[#{rutina.seleccione.cliente}]]</p>
+        </div>
+
+        <!-- El cliente NO tiene rutina -->
+        <div th:if="${cedula != null and !cedula.isBlank() and rutina == null}" class="card p-5 text-center text-muted">
+            <i class="fa-solid fa-clipboard-question fs-1 mb-3 text-secondary"></i>
+            <p class="mb-0">[[#{rutina.sin.rutina}]]</p>
+        </div>
+
+        <!-- El cliente SÍ tiene rutina -->
+        <div th:if="${rutina != null}" class="card p-4">
+
+            <!-- Encabezado -->
+            <div class="d-flex justify-content-between align-items-start mb-3">
+                <div>
+                    <h4 class="fw-bold mb-1" th:text="${rutina.nombre}">Tren Superior</h4>
+                    <small class="text-muted">
+                        <i class="fa-solid fa-user-tie me-1"></i>
+                        [[#{rutina.entrenador}]]: [[${rutina.entrenador.nombreCompleto}]]
+                    </small>
+                </div>
+                <span class="badge rounded-pill bg-success fs-6">[[#{rutina.vigente}]]</span>
+            </div>
+
+            <!-- Indicaciones del entrenador -->
+            <div th:if="${rutina.observaciones != null and !rutina.observaciones.isBlank()}"
+                 class="p-3 bg-light rounded-3 border mb-4">
+                <div class="small fw-semibold text-primary mb-1">
+                    <i class="fa-solid fa-comment-dots me-1"></i> [[#{rutina.observaciones}]]
+                </div>
+                <p class="mb-0" th:text="${rutina.observaciones}">Descansar 60 segundos entre series.</p>
+            </div>
+
+            <!-- Ejercicios como tarjetas -->
+            <h6 class="fw-bold mb-3">[[#{rutina.ejercicios}]]</h6>
+            <p th:if="${rutina.ejercicios.empty}" class="text-muted">[[#{rutina.sin.ejercicios}]]</p>
+
+            <div class="row g-3">
+                <div class="col-md-6" th:each="d, info : ${rutina.ejercicios}">
+                    <div class="border rounded-3 p-3 h-100">
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <span class="badge bg-dark rounded-circle" th:text="${info.count}">1</span>
+                            <span class="fw-bold" th:text="${d.ejercicio.nombre}">Press banca</span>
+                        </div>
+                        <div class="d-flex gap-3 small">
+                            <span><strong th:text="${d.series}">4</strong> [[#{rutina.series}]]</span>
+                            <span><strong th:text="${d.repeticiones}">12</strong> [[#{rutina.repeticiones}]]</span>
+                            <span th:if="${d.peso != null}"><strong th:text="${d.peso}">40</strong> kg</span>
+                        </div>
+                        <small th:if="${d.observaciones != null}" class="text-muted d-block mt-2">
+                            <i class="fa-solid fa-lightbulb text-warning me-1"></i>[[${d.observaciones}]]
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

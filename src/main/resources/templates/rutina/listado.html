@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://thymeleaf.org">
+    <head th:replace="~{general/fragmentos :: head}"></head>
+    <body>
+        <header th:replace="~{general/fragmentos :: header}"></header>
+
+        <section th:replace="~{general/fragmentos :: titulo('fa-solid fa-dumbbell', #{rutina.titulo}, #{rutina.crear})}"></section>
+
+        <!-- Selector de cliente (temporal hasta tener login) -->
+        <section th:replace="~{rutina/fragmentos :: selectorCliente}"></section>
+
+        <!-- Rutina vigente, ejercicios y formulario para crear (HU15) -->
+        <th:block th:if="${cedulaCliente != null and !cedulaCliente.isBlank()}">
+            <section th:replace="~{rutina/fragmentos :: rutinaCliente}"></section>
+        </th:block>
+
+        <section th:replace="~{general/fragmentos :: mostrarToast}"></section>
+
+        <footer th:replace="~{general/fragmentos :: footer}"></footer>
+    </body>
+</html>
