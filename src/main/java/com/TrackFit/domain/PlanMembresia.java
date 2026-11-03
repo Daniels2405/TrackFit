@@ -19,6 +19,8 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import java.util.ArrayList;
+import jakarta.persistence.CascadeType;
 
 /**
  *
@@ -63,9 +65,19 @@ public class PlanMembresia implements Serializable {
 
     private boolean activo;
 
-    @OneToMany(mappedBy = "planMembresia")
-    private List<PlanBeneficio> beneficios;
+    @OneToMany(mappedBy = "planMembresia", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PlanBeneficio> beneficios = new ArrayList<>();
 
-    @OneToMany(mappedBy = "planMembresia")
-    private List<Membresia> membresias;
+    // Métodos auxiliares para la gestión de Hibernate
+    public void addBeneficio(PlanBeneficio beneficio) {
+        this.beneficios.add(beneficio);
+        beneficio.setPlan(this);
+    }
+
+    public void clearBeneficios() {
+        for (PlanBeneficio b : this.beneficios) {
+            b.setPlan(null);
+        }
+        this.beneficios.clear();
+    }
 }

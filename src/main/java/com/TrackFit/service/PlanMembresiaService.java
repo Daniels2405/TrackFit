@@ -1,5 +1,6 @@
 package com.TrackFit.service;
 
+import com.TrackFit.domain.PlanBeneficio;
 import java.util.List;
 import java.util.Optional;
 
@@ -62,12 +63,51 @@ public class PlanMembresiaService {
      * Guarda el plan y sincroniza su lista de beneficios proporcionada como texto multilínea.
      */
     @Transactional
-    public PlanMembresia saveConBeneficios(PlanMembresia planMembresia, String textoBeneficios) {
-        PlanMembresia planGuardado = planMembresiaRepository.save(planMembresia);
-        if (textoBeneficios != null) {
-            planBeneficioService.sincronizarBeneficiosTexto(planGuardado, textoBeneficios);
+    public PlanMembresia saveConBeneficios(PlanMembresia planFormulario, String textoBeneficios) {
+        
+        // 1. Obtener el plan de la base de datos o crear uno nuevo
+        PlanMembresia planPersistido = planFormulario.getIdPlan() != null 
+            ? planMembresiaRepository.findById(planFormulario.getIdPlan()).orElse(new PlanMembresia()) 
+            : new PlanMembresia();
+
+        // 2. Actualizar datos nativos del plan
+        planPersistido.setNombre(planFormulario.getNombre());
+        planPersistido.setPrecio(planFormulario.getPrecio());
+        planPersistido.setDuracionDias(planFormulario.getDuracionDias());
+        planPersistido.setAnticipacionReservaDias(planFormulario.getAnticipacionReservaDias());
+        planPersistido.setRutaImagen(planFormulario.getRutaImagen());
+        planPersistido.setActivo(planFormulario.isActivo());
+
+        // 3. Sincronizar beneficios inteligentemente en vez de borrar/crear
+        if (textoBeneficios == null || textoBeneficios.trim().isEmpty()) {
+            planPersistido.clearBeneficios();
+        } else {
+            // Limpiamos y preparamos las nuevas líneas ingresadas en el textarea
+            List<String> nuevasDescripciones = new java.util.ArrayList<>();
+            for (String linea : textoBeneficios.split("\\r?\\n")) {
+                if (!linea.trim().isEmpty()) nuevasDescripciones.add(linea.trim());
+            }
+
+            // Eliminar beneficios que ya no están en el texto
+            planPersistido.getBeneficios().removeIf(b -> !nuevasDescripciones.contains(b.getDescripcion()));
+
+            // Obtener los que ya existen para no duplicarlos
+            List<String> descripcionesExistentes = planPersistido.getBeneficios().stream()
+                .map(PlanBeneficio::getDescripcion)
+                .toList();
+
+            // Agregar solo los que son completamente nuevos
+            for (String desc : nuevasDescripciones) {
+                if (!descripcionesExistentes.contains(desc)) {
+                    PlanBeneficio nuevoBeneficio = new PlanBeneficio();
+                    nuevoBeneficio.setDescripcion(desc);
+                    planPersistido.addBeneficio(nuevoBeneficio);
+                }
+            }
         }
-        return planGuardado;
+
+        // 4. Guardar
+        return planMembresiaRepository.save(planPersistido);
     }
 
     @Transactional
@@ -76,8 +116,7 @@ public class PlanMembresiaService {
             throw new IllegalArgumentException("El plan con id " + idPlan + " no existe.");
         }
         try {
-            // Eliminar primero sus beneficios asociados
-            planBeneficioService.deletePorPlan(idPlan);
+            // Ya no necesitas borrar los beneficios manualmente, Hibernate lo hace por ti
             planMembresiaRepository.deleteById(idPlan);
             planMembresiaRepository.flush();
         } catch (DataIntegrityViolationException e) {
