@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.TrackFit.domain.PlanBeneficio;
-import com.TrackFit.domain.PlanMembresia;
 import com.TrackFit.repository.PlanBeneficioRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -52,40 +51,6 @@ public class PlanBeneficioService {
         } catch (DataIntegrityViolationException e) {
             log.warn("No fue posible eliminar el beneficio {}", idBeneficio, e);
             throw e;
-        }
-    }
-
-    @Transactional
-    public void deletePorPlan(Integer idPlan) {
-        planBeneficioRepository.deleteByPlanMembresiaIdPlan(idPlan);
-    }
-
-    /**
-     * Sincroniza los beneficios de un plan a partir de un texto multilínea (un beneficio por línea).
-     * Soporta la ayuda definida en messages.properties: plan.beneficios.ayuda=Escriba un beneficio por línea.
-     */
-    @Transactional
-    public void sincronizarBeneficiosTexto(PlanMembresia plan, String textoBeneficios) {
-        if (plan == null || plan.getIdPlan() == null) {
-            return;
-        }
-
-        deletePorPlan(plan.getIdPlan());
-
-        if (textoBeneficios != null && !textoBeneficios.isBlank()) {
-            String[] lineas = textoBeneficios.split("\\r?\\n");
-            for (String linea : lineas) {
-                String desc = linea.trim();
-                if (!desc.isEmpty()) {
-                    if (desc.length() > 100) {
-                        desc = desc.substring(0, 100);
-                    }
-                    PlanBeneficio beneficio = new PlanBeneficio();
-                    beneficio.setPlanMembresia(plan);
-                    beneficio.setDescripcion(desc);
-                    planBeneficioRepository.save(beneficio);
-                }
-            }
         }
     }
 }
