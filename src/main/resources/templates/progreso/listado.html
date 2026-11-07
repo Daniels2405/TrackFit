@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Progreso</title>
+</head>
+<body>
+
+<h1>Progreso registrado</h1>
+
+<table border="1">
+
+    <tr>
+        <th>ID</th>
+        <th>Fecha</th>
+        <th>Peso</th>
+        <th>% Grasa</th>
+    </tr>
+
+    <tr th:each="p : ${progresos}">
+        <td th:text="${p.idProgreso}"></td>
+        <td th:text="${p.fecha}"></td>
+        <td th:text="${p.peso}"></td>
+        <td th:text="${p.porcentajeGrasa}"></td>
+    </tr>
+
+</table>
+
+</body>
+</html>
