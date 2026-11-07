@@ -17,12 +17,14 @@
     </tr>
 
     <tr th:each="p : ${progresos}">
-        <td th:text="${p.idProgreso}"></td>
-        <td th:text="${p.fecha}"></td>
-        <td th:text="${p.peso}"></td>
-        <td th:text="${p.porcentajeGrasa}"></td>
-    </tr>
-
+    <td th:text="${p.idProgreso}"></td>
+    <td th:text="${p.cliente.nombreCompleto}"></td>
+    <td th:text="${p.entrenador.nombreCompleto}"></td>
+    <td th:text="${p.fecha}"></td>
+    <td th:text="${p.peso}"></td>
+    <td th:text="${p.porcentajeGrasa}"></td>
+    <td th:text="${p.observaciones}"></td>
+</tr>
 </table>
 
 </body>
