@@ -11,7 +11,7 @@
 
         <main class="container mt-4 mb-5">
 
-            <h2 class="mb-4">Administración de horarios</h2>
+            <h2 class="mb-4">[[#{horario.administracion}]]</h2>
 
             <!-- Mensaje cuando el horario se registra correctamente -->
             <div th:if="${todoOk}" class="alert alert-success">
@@ -27,7 +27,7 @@
             <div class="card shadow-sm mb-4">
 
                 <div class="card-header bg-dark text-white">
-                    <h5 class="mb-0">Registrar nuevo horario</h5>
+                    <h5 class="mb-0">[[#{horario.registrar}]]</h5>
                 </div>
 
                 <div class="card-body">
@@ -36,12 +36,12 @@
 
                         <!-- Selección de la actividad -->
                         <div class="mb-3">
-                            <label class="form-label">Actividad</label>
+                            <label class="form-label">[[#{horario.actividad}]]</label>
 
                             <select name="actividad.idActividad"
                                     class="form-select" required>
 
-                                <option value="">Seleccione una actividad</option>
+                                <option value="">[[#{horario.seleccione.actividad}]]</option>
 
                                 <option th:each="a : ${actividades}"
                                         th:value="${a.idActividad}"
@@ -53,7 +53,7 @@
 
                         <!-- Fecha de la actividad -->
                         <div class="mb-3">
-                            <label class="form-label">Fecha</label>
+                            <label class="form-label">[[#{horario.fecha}]]</label>
 
                             <input type="date"
                                    name="fecha"
@@ -63,7 +63,7 @@
 
                         <!-- Hora de inicio -->
                         <div class="mb-3">
-                            <label class="form-label">Hora de inicio</label>
+                            <label class="form-label">[[#{horario.hora.inicio}]]</label>
 
                             <input type="time"
                                    name="horaInicio"
@@ -73,7 +73,7 @@
 
                         <!-- Hora de finalización -->
                         <div class="mb-3">
-                            <label class="form-label">Hora de finalización</label>
+                            <label class="form-label">[[#{horario.hora.fin}]]</label>
 
                             <input type="time"
                                    name="horaFin"
@@ -83,7 +83,7 @@
 
                         <!-- Cupo máximo de participantes -->
                         <div class="mb-3">
-                            <label class="form-label">Cupo máximo</label>
+                            <label class="form-label">[[#{horario.cupo.maximo}]]</label>
 
                             <input type="number"
                                    name="cupoMaximo"
@@ -94,7 +94,7 @@
 
                         <!-- Botón para guardar el horario -->
                         <button type="submit" class="btn btn-primary">
-                            Guardar horario
+                            [[#{horario.guardar}]]
                         </button>
 
                     </form>
@@ -102,7 +102,7 @@
             </div>
 
             <!-- Tabla con los horarios registrados -->
-            <h4 class="mb-3">Listado de horarios</h4>
+            <h4 class="mb-3">[[#{horario.listado}]]</h4>
 
             <div class="table-responsive">
 
@@ -110,14 +110,14 @@
 
                     <thead class="table-dark">
                         <tr>
-                            <th>ID</th>
-                            <th>Actividad</th>
-                            <th>Fecha</th>
-                            <th>Hora inicio</th>
-                            <th>Hora fin</th>
-                            <th>Cupo máximo</th>
+                            <th>[[#{general.id}]]</th>
+                            <th>[[#{horario.actividad}]]</th>
+                            <th>[[#{horario.fecha}]]</th>
+                            <th>[[#{horario.hora.inicio}]]</th>
+                            <th>[[#{horario.hora.fin}]]</th>
+                            <th>[[#{horario.cupo.maximo}]]</th>
                             <!-- Columna para mostrar los espacios disponibles -->
-                            <th>Espacios disponibles</th>
+                            <th>[[#{horario.cupos.disponibles}]]</th>
                         </tr>
                     </thead>
 
@@ -150,7 +150,7 @@
                         <!-- Mensaje cuando no existen horarios -->
                         <tr th:if="${#lists.isEmpty(horarios)}">
                             <td colspan="7" class="text-center">
-                                No hay horarios registrados.
+                                [[#{horario.lista.vacia}]]
                             </td>
                         </tr>
 

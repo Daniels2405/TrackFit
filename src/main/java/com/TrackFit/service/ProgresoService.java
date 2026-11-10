@@ -59,7 +59,8 @@ public class ProgresoService {
 
     /**
      * HU17: registra una medición de progreso aplicando las reglas de negocio.
-     * Lanza IllegalArgumentException con un mensaje claro si algo no cumple.
+     * Lanza IllegalArgumentException con la clave del mensaje (messages.properties)
+     * si algo no cumple; el controller la traduce al idioma activo.
      */
     @Transactional
     public Progreso registrar(Progreso progreso) {
@@ -68,40 +69,40 @@ public class ProgresoService {
         if (progreso.getCliente() == null
                 || progreso.getCliente().getCedula() == null
                 || progreso.getCliente().getCedula().isBlank()) {
-            throw new IllegalArgumentException("Seleccione un cliente");
+            throw new IllegalArgumentException("progreso.error.cliente.obligatorio");
         }
         Usuario cliente = clienteRepository
                 .findClienteByCedula(progreso.getCliente().getCedula())
-                .orElseThrow(() -> new IllegalArgumentException("El cliente no existe"));
+                .orElseThrow(() -> new IllegalArgumentException("progreso.error.cliente.no.existe"));
 
         // Entrenador: debe venir seleccionado y tener el rol ENTRENADOR
         if (progreso.getEntrenador() == null
                 || progreso.getEntrenador().getCedula() == null
                 || progreso.getEntrenador().getCedula().isBlank()) {
-            throw new IllegalArgumentException("Seleccione un entrenador");
+            throw new IllegalArgumentException("progreso.error.entrenador.obligatorio");
         }
         Usuario entrenador = entrenadorRepository
                 .findEntrenadorByCedula(progreso.getEntrenador().getCedula())
-                .orElseThrow(() -> new IllegalArgumentException("El entrenador no existe"));
+                .orElseThrow(() -> new IllegalArgumentException("progreso.error.entrenador.no.existe"));
 
         // Fecha: obligatoria y no puede ser futura
         if (progreso.getFecha() == null) {
             progreso.setFecha(LocalDate.now());
         }
         if (progreso.getFecha().isAfter(LocalDate.now())) {
-            throw new IllegalArgumentException("La fecha no puede ser futura");
+            throw new IllegalArgumentException("progreso.error.fecha.futura");
         }
 
         // Peso: mayor a cero (misma regla del CHECK de la tabla)
         if (progreso.getPeso() == null || progreso.getPeso().signum() <= 0) {
-            throw new IllegalArgumentException("El peso debe ser mayor a cero");
+            throw new IllegalArgumentException("progreso.error.peso");
         }
 
         // % de grasa: opcional, pero entre 0 y 100
         BigDecimal grasa = progreso.getPorcentajeGrasa();
         if (grasa != null
                 && (grasa.signum() < 0 || grasa.compareTo(BigDecimal.valueOf(100)) > 0)) {
-            throw new IllegalArgumentException("El % de grasa debe estar entre 0 y 100");
+            throw new IllegalArgumentException("progreso.error.grasa");
         }
 
         // Observaciones vacías se guardan como NULL

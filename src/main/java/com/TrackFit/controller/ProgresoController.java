@@ -3,6 +3,8 @@ package com.TrackFit.controller;
 import java.time.LocalDate;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -21,6 +23,7 @@ import com.TrackFit.service.ProgresoService;
 public class ProgresoController {
 
     private final ProgresoService progresoService;
+    private final MessageSource messageSource;
 
     // HU18: historial de progreso (opcionalmente filtrado por cédula del cliente)
     @GetMapping("/listado")
@@ -62,23 +65,28 @@ public class ProgresoController {
 
         // Datos con formato inválido (ej. texto en el peso o una fecha mal formada)
         if (bindingResult.hasErrors()) {
-            model.addAttribute("error",
-                    "No se pudo registrar el progreso: revise el formato de los datos");
+            model.addAttribute("error", mensaje("progreso.error.formato"));
             return mostrarFormulario(progreso, model);
         }
 
         try {
             progresoService.registrar(progreso);
 
-        } catch (Exception e) {
-
+        } catch (IllegalArgumentException e) {
+            // Regla de negocio: el service manda la clave del mensaje
             model.addAttribute("error",
-                    "No se pudo registrar el progreso: " + e.getMessage());
+                    mensaje("progreso.error.registrar",
+                            mensaje(e.getMessage() != null ? e.getMessage() : "error.general")));
+            return mostrarFormulario(progreso, model);
+
+        } catch (Exception e) {
+            model.addAttribute("error",
+                    mensaje("progreso.error.registrar", mensaje("error.general")));
             return mostrarFormulario(progreso, model);
         }
 
         redirectAttributes.addFlashAttribute(
-                "todoOk", "Progreso registrado correctamente");
+                "todoOk", mensaje("progreso.guardado.ok"));
 
         return "redirect:/progreso/listado";
     }
@@ -91,5 +99,11 @@ public class ProgresoController {
         model.addAttribute("entrenadores", progresoService.getEntrenadoresActivos());
 
         return "progreso/formulario";
+    }
+
+    // Traduce una clave de messages.properties al idioma que eligió el usuario.
+    // Si la clave no existe, devuelve el texto tal cual.
+    private String mensaje(String clave, Object... args) {
+        return messageSource.getMessage(clave, args, clave, LocaleContextHolder.getLocale());
     }
 }

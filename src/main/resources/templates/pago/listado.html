@@ -5,7 +5,7 @@
     <body>
         <header th:replace="~{general/fragmentos :: header}"></header>
 
-        <section th:replace="~{general/fragmentos :: titulo('fa-solid fa-money-bill-wave', 'Registro de pagos', 'Administración de pagos de membresías')}"></section>
+        <section th:replace="~{general/fragmentos :: titulo('fa-solid fa-money-bill-wave', #{pago.registro.titulo}, #{pago.registro.subtitulo})}"></section>
 
         <main class="container mb-5">
 
@@ -21,17 +21,17 @@
 
             <div class="card shadow-sm mb-4">
                 <div class="card-header bg-dark text-white">
-                    <h5 class="mb-0">Registrar nuevo pago</h5>
+                    <h5 class="mb-0">[[#{pago.registrar.nuevo}]]</h5>
                 </div>
 
                 <div class="card-body">
                     <form th:action="@{/pago/guardar}" method="post">
 
                         <div class="mb-3">
-                            <label class="form-label">Membresía del cliente</label>
+                            <label class="form-label">[[#{pago.membresia.cliente}]]</label>
                             <select name="membresia.idMembresia"
                                     class="form-select" required>
-                                <option value="">Seleccione una membresía</option>
+                                <option value="">[[#{pago.seleccione.membresia}]]</option>
 
                                 <option th:each="m : ${membresias}"
                                         th:value="${m.idMembresia}"
@@ -41,7 +41,7 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Monto del pago</label>
+                            <label class="form-label">[[#{pago.monto.pago}]]</label>
                             <input type="number"
                                    name="monto"
                                    class="form-control"
@@ -51,7 +51,7 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Fecha del pago</label>
+                            <label class="form-label">[[#{pago.fecha}]]</label>
                             <input type="date"
                                    name="fecha"
                                    class="form-control"
@@ -60,36 +60,36 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Método de pago</label>
+                            <label class="form-label">[[#{pago.metodo}]]</label>
                             <select name="metodoPago"
                                     class="form-select" required>
-                                <option value="">Seleccione un método</option>
-                                <option value="Efectivo">Efectivo</option>
-                                <option value="Tarjeta">Tarjeta</option>
-                                <option value="SINPE">SINPE</option>
-                                <option value="Transferencia">Transferencia</option>
+                                <option value="">[[#{pago.seleccione.metodo}]]</option>
+                                <option value="Efectivo">[[#{pago.metodo.Efectivo}]]</option>
+                                <option value="Tarjeta">[[#{pago.metodo.Tarjeta}]]</option>
+                                <option value="SINPE">[[#{pago.metodo.SINPE}]]</option>
+                                <option value="Transferencia">[[#{pago.metodo.Transferencia}]]</option>
                             </select>
                         </div>
 
                         <button type="submit" class="btn btn-primary">
                             <i class="fa-solid fa-floppy-disk me-1"></i>
-                            Guardar pago
+                            [[#{pago.guardar}]]
                         </button>
                     </form>
                 </div>
             </div>
 
-            <h4 class="mb-3">Historial de pagos</h4>
+            <h4 class="mb-3">[[#{pago.listado}]]</h4>
 
             <div class="table-responsive">
                 <table class="table table-striped table-hover">
                     <thead class="table-dark">
                         <tr>
-                            <th>Cliente</th>
-                            <th>Plan</th>
-                            <th>Monto</th>
-                            <th>Fecha</th>
-                            <th>Método</th>
+                            <th>[[#{pago.cliente}]]</th>
+                            <th>[[#{membresia.plan}]]</th>
+                            <th>[[#{pago.monto}]]</th>
+                            <th>[[#{general.fecha}]]</th>
+                            <th>[[#{pago.metodo.corto}]]</th>
                         </tr>
                     </thead>
 
@@ -99,7 +99,8 @@
                             <td th:text="${p.membresia.planMembresia.nombre}"></td>
                             <td th:text="${p.monto}"></td>
                             <td th:text="${#temporals.format(p.fecha, 'dd/MM/yyyy')}"></td>
-                            <td th:text="${p.metodoPago}"></td>
+                            <!-- Muestra el método traducido (si no hay clave, el valor guardado) -->
+                            <td th:text="${#messages.msgOrNull('pago.metodo.' + p.metodoPago) ?: p.metodoPago}"></td>
                         </tr>
                     </tbody>
                 </table>

@@ -7,11 +7,11 @@
         <header th:replace="~{general/fragmentos :: header}"></header>
 
         <main class="container mt-4 mb-5">
-            <h2 class="mb-4">Consulta de membresía</h2>
+            <h2 class="mb-4">[[#{membresia.consulta.titulo}]]</h2>
 
             <div th:if="${membresias.empty}"
                  class="alert alert-info">
-                No se encontraron membresías para este cliente.
+                [[#{membresia.consulta.vacia}]]
             </div>
 
             <div th:unless="${membresias.empty}"
@@ -20,10 +20,10 @@
                 <table class="table table-striped table-hover">
                     <thead class="table-dark">
                         <tr>
-                            <th>Plan</th>
-                            <th>Fecha de inicio</th>
-                            <th>Fecha de vencimiento</th>
-                            <th>Estado</th>
+                            <th>[[#{membresia.plan}]]</th>
+                            <th>[[#{membresia.fecha.inicio}]]</th>
+                            <th>[[#{membresia.fecha.vencimiento}]]</th>
+                            <th>[[#{membresia.estado}]]</th>
                         </tr>
                     </thead>
 
@@ -38,7 +38,7 @@
                             <td>
                                 <span class="badge"
                                       th:classappend="${m.vigente} ? 'bg-success' : 'bg-danger'"
-                                      th:text="${m.estadoCalculado}">
+                                      th:text="${m.vigente} ? #{membresia.vigente} : #{membresia.vencida}">
                                 </span>
                             </td>
                         </tr>
