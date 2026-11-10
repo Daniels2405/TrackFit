@@ -40,7 +40,7 @@ public class ActividadService {
                 || actividad.getNombre().trim().isEmpty()) {
 
             throw new IllegalArgumentException(
-                    "Debe ingresar el nombre de la actividad");
+                    "actividad.error.nombre.obligatorio");
         }
 
         //Elimina los espacios al inicio y al final del nombre
@@ -51,7 +51,7 @@ public class ActividadService {
         if (actividadRepository.existsByNombreIgnoreCase(nombre)) {
 
             throw new IllegalArgumentException(
-                    "Ya existe una actividad con ese nombre");
+                    "actividad.error.nombre.existe");
         }
 
         //Guarda la nueva actividad en la base de datos

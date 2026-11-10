@@ -8,6 +8,8 @@ import com.TrackFit.domain.Horario;
 import com.TrackFit.service.HorarioService;
 import com.TrackFit.service.ActividadService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,6 +28,9 @@ public class HorarioController {
 
     //Servicio que permite consultar las actividades disponibles
     private final ActividadService actividadService;
+
+    //Permite mostrar los mensajes en el idioma elegido
+    private final MessageSource messageSource;
 
     //Método que muestra el listado de horarios y el formulario
     @GetMapping("/listado")
@@ -76,22 +81,28 @@ public class HorarioController {
 
             //Muestra un mensaje cuando se registra correctamente
             redirectAttributes.addFlashAttribute(
-                    "todoOk", "Horario registrado correctamente");
+                    "todoOk", mensaje("horario.guardado.ok"));
 
         } catch (IllegalArgumentException e) {
 
             //Muestra el mensaje de las validaciones del servicio
             redirectAttributes.addFlashAttribute(
-                    "error", e.getMessage());
+                    "error", mensaje(e.getMessage() != null ? e.getMessage() : "error.general"));
 
         } catch (Exception e) {
 
             //Muestra un mensaje si ocurre otro error
             redirectAttributes.addFlashAttribute(
-                    "error", "No se pudo registrar el horario");
+                    "error", mensaje("horario.error.registrar"));
         }
 
         //Regresa al listado de horarios
         return "redirect:/horario/listado";
+    }
+
+    // Traduce una clave de messages.properties al idioma que eligió el usuario.
+    // Si la clave no existe, devuelve el texto tal cual.
+    private String mensaje(String clave, Object... args) {
+        return messageSource.getMessage(clave, args, clave, LocaleContextHolder.getLocale());
     }
 }

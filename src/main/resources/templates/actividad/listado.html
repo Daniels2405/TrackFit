@@ -11,7 +11,7 @@
 
         <main class="container mt-4 mb-5">
 
-            <h2 class="mb-4">Administración de actividades</h2>
+            <h2 class="mb-4">[[#{actividad.administracion}]]</h2>
 
             <!-- Mensaje cuando la actividad se registra correctamente -->
             <div th:if="${todoOk}" class="alert alert-success">
@@ -27,7 +27,7 @@
             <div class="card shadow-sm mb-4">
 
                 <div class="card-header bg-dark text-white">
-                    <h5 class="mb-0">Registrar nueva actividad</h5>
+                    <h5 class="mb-0">[[#{actividad.registrar}]]</h5>
                 </div>
 
                 <div class="card-body">
@@ -38,7 +38,7 @@
                         <!-- Nombre de la actividad -->
                         <div class="mb-3">
                             <label class="form-label">
-                                Nombre de la actividad
+                                [[#{actividad.nombre.actividad}]]
                             </label>
 
                             <input type="text"
@@ -50,7 +50,7 @@
 
                         <!-- Descripción de la actividad -->
                         <div class="mb-3">
-                            <label class="form-label">Descripción</label>
+                            <label class="form-label">[[#{actividad.descripcion}]]</label>
 
                             <textarea name="descripcion"
                                       class="form-control"
@@ -61,7 +61,7 @@
                         <!-- Dirección de la imagen de la actividad -->
                         <div class="mb-3">
                             <label class="form-label">
-                                Ruta de la imagen (opcional)
+                                [[#{actividad.ruta.imagen}]] [[#{general.opcional}]]
                             </label>
 
                             <input type="text"
@@ -72,7 +72,7 @@
 
                         <!-- Botón para guardar la actividad -->
                         <button type="submit" class="btn btn-primary">
-                            Guardar actividad
+                            [[#{actividad.guardar}]]
                         </button>
 
                     </form>
@@ -80,17 +80,17 @@
             </div>
 
             <!-- Tabla que muestra las actividades registradas -->
-            <h4 class="mb-3">Listado de actividades</h4>
+            <h4 class="mb-3">[[#{actividad.listado}]]</h4>
 
             <div class="table-responsive">
                 <table class="table table-striped table-hover">
 
                     <thead class="table-dark">
                         <tr>
-                            <th>ID</th>
-                            <th>Nombre</th>
-                            <th>Descripción</th>
-                            <th>Estado</th>
+                            <th>[[#{general.id}]]</th>
+                            <th>[[#{actividad.nombre}]]</th>
+                            <th>[[#{actividad.descripcion}]]</th>
+                            <th>[[#{general.estado}]]</th>
                         </tr>
                     </thead>
 
@@ -109,12 +109,12 @@
                             <td>
                                 <span th:if="${a.activo}"
                                       class="badge bg-success">
-                                    Activa
+                                    [[#{actividad.activa}]]
                                 </span>
 
                                 <span th:unless="${a.activo}"
                                       class="badge bg-danger">
-                                    Inactiva
+                                    [[#{actividad.inactiva}]]
                                 </span>
                             </td>
 
@@ -123,7 +123,7 @@
                         <!-- Mensaje cuando no existen actividades -->
                         <tr th:if="${#lists.isEmpty(actividades)}">
                             <td colspan="4" class="text-center">
-                                No hay actividades registradas.
+                                [[#{actividad.lista.vacia}]]
                             </td>
                         </tr>
 
