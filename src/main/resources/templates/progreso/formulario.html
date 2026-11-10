@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{general/fragmentos :: head}"></head>
+
+<body>
+
+<header th:replace="~{general/fragmentos :: header}"></header>
+
+<section th:replace="~{general/fragmentos :: titulo('fa-solid fa-weight-scale', 'Registrar progreso', 'Nueva medición física del cliente')}"></section>
+
+<main class="container mb-5">
+
+    <div th:if="${error}" class="alert alert-danger" role="alert">
+        <span th:text="${error}"></span>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-dark text-white">
+            <h5 class="mb-0">Datos de la medición</h5>
+        </div>
+
+        <div class="card-body">
+            <form th:action="@{/progreso/guardar}" method="post">
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Cliente</label>
+                        <select name="cliente.cedula" class="form-select" required>
+                            <option value="">Seleccione un cliente</option>
+                            <option th:each="c : ${clientes}"
+                                    th:value="${c.cedula}"
+                                    th:selected="${progreso.cliente != null and progreso.cliente.cedula == c.cedula}"
+                                    th:text="${c.nombreCompleto + ' (' + c.cedula + ')'}">
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Entrenador</label>
+                        <select name="entrenador.cedula" class="form-select" required>
+                            <option value="">Seleccione un entrenador</option>
+                            <option th:each="e : ${entrenadores}"
+                                    th:value="${e.cedula}"
+                                    th:selected="${progreso.entrenador != null and progreso.entrenador.cedula == e.cedula}"
+                                    th:text="${e.nombreCompleto}">
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Fecha</label>
+                        <input type="date"
+                               name="fecha"
+                               class="form-control"
+                               th:value="${progreso.fecha != null ? #temporals.format(progreso.fecha, 'yyyy-MM-dd') : ''}"
+                               th:max="${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd')}"
+                               required>
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Peso (kg)</label>
+                        <input type="number"
+                               name="peso"
+                               th:value="${progreso.peso}"
+                               class="form-control"
+                               min="0.01"
+                               max="999.99"
+                               step="0.01"
+                               required>
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">% de grasa <small class="text-muted">(opcional)</small></label>
+                        <input type="number"
+                               name="porcentajeGrasa"
+                               th:value="${progreso.porcentajeGrasa}"
+                               class="form-control"
+                               min="0"
+                               max="100"
+                               step="0.01">
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Observaciones <small class="text-muted">(opcional)</small></label>
+                    <textarea name="observaciones"
+                              class="form-control"
+                              rows="3"
+                              maxlength="500"
+                              th:text="${progreso.observaciones}"></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    <i class="fa-solid fa-floppy-disk me-1"></i>
+                    Guardar progreso
+                </button>
+
+                <a th:href="@{/progreso/listado}" class="btn btn-secondary ms-2">
+                    <i class="fa-solid fa-arrow-left me-1"></i>
+                    Volver al historial
+                </a>
+            </form>
+        </div>
+    </div>
+
+</main>
+
+<footer th:replace="~{general/fragmentos :: footer}"></footer>
+
+</body>
+
+</html>
