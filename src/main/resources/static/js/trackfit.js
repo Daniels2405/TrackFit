@@ -267,6 +267,15 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // ------------------------------------------------------------------
+    // 9. Botones de imprimir (atributo data-imprimir), por ejemplo en Reportes
+    // ------------------------------------------------------------------
+    document.querySelectorAll('[data-imprimir]').forEach(function (boton) {
+        boton.addEventListener('click', function () {
+            window.print();
+        });
+    });
+
+    // ------------------------------------------------------------------
     // 7. Ocultar automáticamente los Toasts tras 4 segundos
     // ------------------------------------------------------------------
     setTimeout(function () {
