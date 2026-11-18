@@ -1,10 +1,12 @@
 package com.TrackFit.controller;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -43,6 +45,8 @@ public class MembresiaController {
 
         model.addAttribute("membresias", membresias);
         model.addAttribute("totalMembresias", membresias.size());
+        // Membresías con pagos: no se pueden eliminar
+        model.addAttribute("conPagos", membresiaService.getIdsConPagos());
         model.addAttribute("clientesDisponibles", clientes);
         model.addAttribute("planesDisponibles", planes);
         model.addAttribute("nuevaMembresia", new Membresia());
@@ -56,6 +60,7 @@ public class MembresiaController {
             RedirectAttributes redirectAttributes) {
         String tipo = "error";
         String mensaje = "form.datos.invalidos";
+        Object[] argumentos = null;
 
         if (cedulaCliente == null || cedulaCliente.isBlank()) {
             mensaje = "membresia.error.cliente.obligatorio";
@@ -66,6 +71,12 @@ public class MembresiaController {
                 membresiaService.asignarMembresia(cedulaCliente, idPlan, fechaInicio);
                 tipo = "todoOk";
                 mensaje = "accion.guardado.ok";
+            } catch (MembresiaService.MembresiaTraslapadaException e) {
+                // Ya tiene una membresía activa en esas fechas
+                tipo = "error";
+                mensaje = "membresia.error.traslape";
+                argumentos = new Object[]{
+                    e.getDisponibleDesde().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))};
             } catch (IllegalStateException e) {
                 tipo = "error";
                 mensaje = "membresia.error.plan.inactivo";
@@ -75,7 +86,7 @@ public class MembresiaController {
             }
         }
 
-        redirectAttributes.addFlashAttribute(tipo, messageSource.getMessage(mensaje, null, LocaleContextHolder.getLocale()));
+        redirectAttributes.addFlashAttribute(tipo, messageSource.getMessage(mensaje, argumentos, LocaleContextHolder.getLocale()));
         return "redirect:/membresia/listado";
     }
 
@@ -102,6 +113,10 @@ public class MembresiaController {
 
         try {
             membresiaService.delete(idMembresia);
+        } catch (IllegalStateException | DataIntegrityViolationException e) {
+            // Tiene pagos registrados: se debe cancelar en lugar de eliminar
+            tipo = "error";
+            mensaje = "membresia.error.tiene.pagos";
         } catch (Exception e) {
             tipo = "error";
             mensaje = "error.general";

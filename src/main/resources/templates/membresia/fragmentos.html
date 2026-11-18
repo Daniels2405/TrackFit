@@ -132,8 +132,8 @@
                                     <td>
                                         <!-- Badge dinámico de vigencia / estado -->
                                         <span class="badge rounded-pill"
-                                              th:classappend="${m.estado == 'Cancelada'} ? 'bg-secondary' : (${m.vigente} ? 'bg-success' : 'bg-danger')"
-                                              th:text="${m.estado == 'Cancelada'} ? #{membresia.cancelada} : (${m.vigente} ? #{membresia.vigente} : #{membresia.vencida})">
+                                              th:classappend="${m.estado == 'Cancelada'} ? 'bg-secondary' : (${m.programada} ? 'bg-info text-dark' : (${m.vigente} ? 'bg-success' : 'bg-danger'))"
+                                              th:text="${m.estado == 'Cancelada'} ? #{membresia.cancelada} : (${m.programada} ? #{membresia.programada} : (${m.vigente} ? #{membresia.vigente} : #{membresia.vencida}))">
                                             Vigente
                                         </span>
                                     </td>
@@ -150,8 +150,16 @@
                                             </button>
                                         </form>
 
-                                        <!-- Eliminar Registro -->
-                                        <button type="button"
+                                        <!-- Eliminar Registro: desactivado si la membresía tiene pagos -->
+                                        <span th:if="${conPagos != null and conPagos.contains(m.idMembresia)}"
+                                              class="d-inline-block" tabindex="0"
+                                              th:title="#{membresia.eliminar.bloqueado}">
+                                            <button type="button" class="btn btn-sm btn-outline-danger" disabled>
+                                                <i class="fa-solid fa-trash"></i>
+                                            </button>
+                                        </span>
+                                        <button th:unless="${conPagos != null and conPagos.contains(m.idMembresia)}"
+                                                type="button"
                                                 class="btn btn-sm btn-outline-danger"
                                                 data-bs-toggle="modal"
                                                 data-bs-target="#confirmModal"
