@@ -5,7 +5,7 @@
 Proyecto Final · SC-403 Desarrollo de Aplicaciones Web y Patrones
 Universidad Fidélitas · III Cuatrimestre 2026
 
-> **Estado del proyecto:** en desarrollo (posterior al Avance 1). Ya están implementados los módulos de usuarios, clientes, planes, membresías, pagos, actividades, horarios, reservas y rutinas. **Pendientes:** inicio de sesión y control de acceso por roles, cancelación de reservas, seguimiento del progreso, reportes e internacionalización en inglés. Ver el [estado por historia de usuario](#10-estado-de-las-historias-de-usuario).
+> **Estado del proyecto:** en desarrollo (posterior al Avance 1). Ya están implementados los módulos de usuarios, clientes, planes, membresías, pagos, actividades, horarios, reservas (con cancelación e inscritos), rutinas, progreso físico y reportes, y la interfaz está disponible en español e inglés. **Pendientes:** inicio de sesión y control de acceso por roles. Ver el [estado por historia de usuario](#10-estado-de-las-historias-de-usuario).
 
 ---
 
@@ -36,7 +36,8 @@ Universidad Fidélitas · III Cuatrimestre 2026
 - Actividades y clases grupales
 - Reservas con control de cupos
 - Rutinas de entrenamiento
-- Seguimiento del progreso físico (modelado en base de datos; pantallas pendientes)
+- Seguimiento del progreso físico
+- Reportes de membresías, pagos y reservas
 
 El sistema distingue **tres niveles de membresía: Standard, Premium y VIP**. Los beneficios, las actividades disponibles y la anticipación permitida para reservar dependen del plan contratado por cada cliente.
 
@@ -92,7 +93,7 @@ En la base de datos los roles son `ADMINISTRADOR`, `RECEPCION`, `ENTRENADOR` y `
 | Interfaz                   | Bootstrap 5.3.8, Font Awesome 7.3.0, jQuery 4.0.0, Popper 2.11.7 (vía WebJars) |
 | Persistencia               | Hibernate/JPA + MySQL 8.0.16 o superior (conector `mysql-connector-j`)         |
 | Productividad              | Lombok, Spring Boot DevTools                                                   |
-| Internacionalización       | `messages.properties` (español) y selector de idioma por parámetro `lang`      |
+| Internacionalización       | `messages.properties` (español), `messages_en.properties` (inglés) y selector de idioma por parámetro `lang` |
 | Almacenamiento de imágenes | Firebase Admin SDK 9.10.0 (dependencia incluida; sin uso aún en el código)     |
 | Arquitectura               | MVC en capas: Controller, Service, Repository, Domain y vistas                 |
 | Construcción               | Maven (el artefacto generado se llama `app.jar`)                               |
@@ -109,8 +110,8 @@ TrackFit/
     │   ├── TrackFitApplication.java      # Clase principal
     │   ├── ProjectConfig.java            # Idioma, mensajes y resolvedor de plantillas
     │   ├── controller/                   # Actividad, Cliente, Horario, Index, Membresia,
-    │   │                                 # Pago, PlanBeneficio, PlanMembresia, Reserva,
-    │   │                                 # Rutina, Usuario
+    │   │                                 # Pago, PlanBeneficio, PlanMembresia, Progreso,
+    │   │                                 # Reporte, Reserva, Rutina, Usuario
     │   ├── service/                      # Lógica de negocio y reglas de validación
     │   ├── repository/                   # Interfaces Spring Data JPA
     │   └── domain/                       # Entidades JPA
@@ -118,11 +119,13 @@ TrackFit/
         ├── application.properties        # Configuración (puerto, base de datos, logging)
         ├── creaTablas.sql                # Esquema, usuarios de BD y datos de demostración
         ├── messages.properties           # Textos de la interfaz (español)
+        ├── messages_en.properties        # Textos de la interfaz (inglés)
         ├── firebase/                     # Credenciales de Firebase (no se versionan)
         ├── static/                       # css/, js/, img/ y fav/
         └── templates/                    # Vistas Thymeleaf por módulo:
                                           # actividad, cliente, general, horario, membresia,
-                                          # pago, plan, reserva, rutina, usuario, index
+                                          # pago, plan, progreso, reporte, reserva, rutina,
+                                          # usuario, index
 ```
 
 ## 8. Acuerdo de trabajo con ramas
@@ -233,13 +236,13 @@ El script carga 2 entrenadores, 1 administrador, 1 encargado de recepción y 15 
 | HU10 | Establecer horarios y cupos máximos            | Alta      | Implementada                                                     |
 | HU11 | Consultar actividades disponibles              | Alta      | Implementada (filtra por plan y anticipación)                    |
 | HU12 | Reservar un espacio en una actividad           | Alta      | Implementada                                                     |
-| HU13 | Cancelar una reserva                           | Media     | Pendiente (no hay acción de cancelar)                            |
-| HU14 | Consultar inscritos en una actividad           | Media     | Pendiente                                                        |
+| HU13 | Cancelar una reserva                           | Media     | Implementada (libera el espacio de inmediato)                    |
+| HU14 | Consultar inscritos en una actividad           | Media     | Implementada (por sesión, desde el listado de horarios)          |
 | HU15 | Crear rutinas de entrenamiento                 | Alta      | Implementada                                                     |
 | HU16 | Consultar rutina de entrenamiento              | Alta      | Implementada                                                     |
-| HU17 | Registrar datos de progreso                    | Media     | Pendiente (existe la tabla `progreso`, sin entidad ni pantallas) |
-| HU18 | Consultar historial de progreso                | Media     | Pendiente                                                        |
-| HU19 | Reportes de membresías, pagos y reservas       | Media     | Pendiente                                                        |
+| HU17 | Registrar datos de progreso                    | Media     | Implementada                                                     |
+| HU18 | Consultar historial de progreso                | Media     | Implementada (con filtro por cliente)                            |
+| HU19 | Reportes de membresías, pagos y reservas       | Media     | Implementada (filtro por rango de fechas)                        |
 | HU20 | Control de permisos según el rol               | Alta      | Pendiente                                                        |
 
 ## 11. Modelo de datos
@@ -263,11 +266,11 @@ Relaciones principales:
 - Una **rutina** pertenece a un cliente y a un entrenador y contiene varios **ejercicios** (`rutina_ejercicio`) con series, repeticiones, peso y observaciones.
 - El **progreso** registra, por cliente y fecha, el peso, el porcentaje de grasa y observaciones del entrenador.
 
-Las entidades JPA (`domain/`) cubren `Usuario`, `Rol`, `PlanMembresia`, `PlanBeneficio`, `Membresia`, `Pago`, `Actividad`, `Horario`, `Reserva`, `Ejercicio`, `Rutina` y `RutinaEjercicio`.
+Las entidades JPA (`domain/`) cubren `Usuario`, `Rol`, `PlanMembresia`, `PlanBeneficio`, `Membresia`, `Pago`, `Actividad`, `Horario`, `Reserva`, `Ejercicio`, `Rutina`, `RutinaEjercicio` y `Progreso`.
 
 ## 12. Reglas de negocio implementadas
 
-- **Reservas:** solo se puede reservar con una membresía vigente; se valida que existan espacios disponibles en el horario; la reserva se registra como `Confirmada`.
+- **Reservas:** solo se puede reservar con una membresía vigente; se valida que existan espacios disponibles en el horario; la reserva se registra como `Confirmada`. El cliente puede cancelarla mientras la sesión no haya iniciado; al cancelarla pasa a `Cancelada` y el espacio queda libre.
 - **Restricciones por plan:** el cliente solo ve horarios desde hoy hasta los días de anticipación de su plan y únicamente de las actividades que su plan permite. No se muestran horarios que ya iniciaron.
 - **Cupos:** cada horario tiene un cupo máximo y el sistema calcula los espacios disponibles.
 - **Actividades:** el nombre es obligatorio y no puede repetirse (sin distinguir mayúsculas).
@@ -280,8 +283,7 @@ Las entidades JPA (`domain/`) cubren `Usuario`, `Rol`, `PlanMembresia`, `PlanBen
 - **Sin autenticación ni autorización.** El proyecto aún no incluye Spring Security: no hay pantalla de login y todas las rutas son accesibles sin sesión. Al reservar o consultar rutinas, el cliente se selecciona por cédula en lugar de tomarse del usuario autenticado. Esto cubre las HU02 y HU20.
 - **Contraseñas sin cifrar al guardar.** Los usuarios del script SQL tienen contraseñas en BCrypt, pero `UsuarioService.save` guarda la contraseña tal como llega del formulario. Debe cifrarse al integrar la seguridad.
 - **Credenciales en el repositorio.** `application.properties` contiene una URL, usuario y contraseña de una base de datos en la nube. Deben retirarse del repositorio, **rotarse** y sustituirse por variables de entorno (ver sección 9).
-- **Internacionalización incompleta.** El menú ofrece español e inglés, pero solo existe `messages.properties` (español); falta `messages_en.properties`.
-- **Funcionalidades sin construir:** cancelación de reservas, consulta de inscritos por actividad, módulo de progreso físico y reportes.
+- **Datos registrados en un solo idioma.** La interfaz se traduce, pero el contenido que ingresan los usuarios (nombres de planes, beneficios, actividades) se muestra tal como se registró.
 - **Pruebas automatizadas:** no hay pruebas unitarias ni de integración todavía.
 - **Firebase:** la dependencia y la carpeta `firebase/` están preparadas para subir imágenes, pero aún no se usan.
 - **Puerto 80:** pensado para despliegue; en desarrollo local puede cambiarse a `8080`.
