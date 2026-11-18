@@ -75,17 +75,36 @@ public class Membresia implements Serializable {
 
     /**
      * Calcula dinámicamente si la membresía está vigente:
-     * El estado no se almacena en base de datos; se calcula comparando
-     * fecha_vencimiento con la fecha actual y verificando que el estado sea 'Activa'.
+     * El estado no se almacena en base de datos; se calcula con las fechas.
+     * Vigente = estado 'Activa' y fecha_inicio <= hoy <= fecha_vencimiento.
+     * Como se calcula cada vez, no hace falta ninguna tarea programada:
+     * el día de inicio pasa sola de Programada a Vigente, y luego a Vencida.
      */
     public boolean isVigente() {
-        if (fechaVencimiento == null || estado == null) {
+        if (fechaInicio == null || fechaVencimiento == null || estado == null) {
             return false;
         }
-        return "Activa".equalsIgnoreCase(estado) && !fechaVencimiento.isBefore(LocalDate.now());
+        LocalDate hoy = LocalDate.now();
+        return "Activa".equalsIgnoreCase(estado)
+                && !fechaInicio.isAfter(hoy)
+                && !fechaVencimiento.isBefore(hoy);
     }
 
+    // Programada = estado 'Activa' pero todavía no llega su fecha de inicio (por ejemplo, una renovación)
+    public boolean isProgramada() {
+        return "Activa".equalsIgnoreCase(estado)
+                && fechaInicio != null
+                && fechaInicio.isAfter(LocalDate.now());
+    }
+
+    // Cancelada, Programada, Vigente o Vencida
     public String getEstadoCalculado() {
+        if ("Cancelada".equalsIgnoreCase(estado)) {
+            return "Cancelada";
+        }
+        if (isProgramada()) {
+            return "Programada";
+        }
         return isVigente() ? "Vigente" : "Vencida";
     }
 }

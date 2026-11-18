@@ -37,8 +37,8 @@
 
                             <td>
                                 <span class="badge"
-                                      th:classappend="${m.vigente} ? 'bg-success' : 'bg-danger'"
-                                      th:text="${m.vigente} ? #{membresia.vigente} : #{membresia.vencida}">
+                                      th:classappend="${m.estado == 'Cancelada'} ? 'bg-secondary' : (${m.programada} ? 'bg-info text-dark' : (${m.vigente} ? 'bg-success' : 'bg-danger'))"
+                                      th:text="${m.estado == 'Cancelada'} ? #{membresia.cancelada} : (${m.programada} ? #{membresia.programada} : (${m.vigente} ? #{membresia.vigente} : #{membresia.vencida}))">
                                 </span>
                             </td>
                         </tr>
