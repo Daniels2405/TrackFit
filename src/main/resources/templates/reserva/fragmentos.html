@@ -101,6 +101,7 @@
                                 <th>[[#{horario.fecha}]]</th>
                                 <th>[[#{horario.hora.inicio}]]</th>
                                 <th>[[#{general.estado}]]</th>
+                                <th class="text-end">[[#{accion.acciones}]]</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -112,6 +113,18 @@
                                     <span class="badge rounded-pill"
                                           th:classappend="${r.estado == 'Confirmada'} ? 'bg-success' : 'bg-secondary'"
                                           th:text="${#messages.msg('reserva.estado.' + r.estado)}">Confirmada</span>
+                                </td>
+                                <!-- Botón Cancelar (HU13): solo reservas confirmadas que no han iniciado -->
+                                <td class="text-end">
+                                    <form th:if="${cancelables != null and cancelables.contains(r.idReserva)}"
+                                          method="post" th:action="@{/reserva/cancelar}"
+                                          th:attr="data-confirmar=#{reserva.confirmar.cancelar}">
+                                        <input type="hidden" name="cedula" th:value="${cedula}"/>
+                                        <input type="hidden" name="idReserva" th:value="${r.idReserva}"/>
+                                        <button type="submit" class="btn btn-outline-danger btn-sm">
+                                            <i class="fa-solid fa-xmark me-1"></i> [[#{reserva.cancelar}]]
+                                        </button>
+                                    </form>
                                 </td>
                             </tr>
                         </tbody>

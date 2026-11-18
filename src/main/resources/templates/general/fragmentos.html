@@ -29,7 +29,7 @@
 </head>
 
 <!-- Fragmento #2: Header y Barra de navegación común -->
-<header th:fragment="header" class="header">
+<header th:fragment="header" class="header d-print-none">
     <nav class="navbar navbar-expand-lg navbar-dark navbar-trackfit py-2">
         <div class="container">
             <!-- Logotipo de la aplicación con icono y acento dorado -->
@@ -99,6 +99,12 @@
                     <li class="nav-item">
                         <a class="nav-link" th:href="@{/reserva/disponibles}">
                             <i class="fa-solid fa-calendar-check me-1"></i> [[#{menu.reservas}]]
+                        </a>
+                    </li>
+                    <!-- Reportes de membresías, pagos y reservas (HU19) -->
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/reporte/listado}">
+                            <i class="fa-solid fa-chart-column me-1"></i> [[#{menu.reportes}]]
                         </a>
                     </li>
                     <!-- Centro de control para Administradores (HU01 - Usuarios del sistema) -->

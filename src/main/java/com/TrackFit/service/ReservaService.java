@@ -18,9 +18,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.Locale;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -179,6 +181,51 @@ public class ReservaService {
         reserva.setHorario(horario);
 
         save(reserva);
+    }
+
+    // HU14: clientes inscritos (reservas confirmadas) en un horario
+    @Transactional(readOnly = true)
+    public List<Reserva> getInscritos(Integer idHorario) {
+        return reservaRepository.findByHorarioIdHorarioAndEstadoOrderByFechaReservaAsc(idHorario, "Confirmada");
+    }
+
+    // HU13: el cliente cancela una de sus reservas confirmadas.
+    // El espacio queda libre de inmediato, porque los cupos solo cuentan las reservas Confirmadas.
+    @Transactional
+    public void cancelar(String cedulaCliente, Integer idReserva) {
+
+        // La reserva debe existir y pertenecer al cliente que la cancela
+        Reserva reserva = (idReserva == null) ? null
+                : reservaRepository.findById(idReserva).orElse(null);
+        if (reserva == null
+                || reserva.getCliente() == null
+                || !reserva.getCliente().getCedula().equals(cedulaCliente)) {
+            throw error("reserva.error.no.existe");
+        }
+
+        // Solo se cancelan reservas que siguen confirmadas
+        if (!"Confirmada".equals(reserva.getEstado())) {
+            throw error("reserva.error.ya.cancelada");
+        }
+
+        // No se puede cancelar una sesión que ya empezó o ya pasó
+        if (yaInicio(reserva.getHorario())) {
+            throw error("reserva.error.cancelar.pasado");
+        }
+
+        reserva.setEstado("Cancelada");
+        reservaRepository.save(reserva);
+    }
+
+    // HU13: ids de las reservas que todavía se pueden cancelar (para mostrar el botón)
+    public Set<Integer> getReservasCancelables(List<Reserva> reservas) {
+        Set<Integer> cancelables = new HashSet<>();
+        for (Reserva r : reservas) {
+            if ("Confirmada".equals(r.getEstado()) && !yaInicio(r.getHorario())) {
+                cancelables.add(r.getIdReserva());
+            }
+        }
+        return cancelables;
     }
 
     // Crea un error con el texto ya traducido desde messages.properties

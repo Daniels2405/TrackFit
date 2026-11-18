@@ -118,6 +118,8 @@
                             <th>[[#{horario.cupo.maximo}]]</th>
                             <!-- Columna para mostrar los espacios disponibles -->
                             <th>[[#{horario.cupos.disponibles}]]</th>
+                            <!-- HU14: enlace a los clientes inscritos -->
+                            <th class="text-end">[[#{inscritos.total}]]</th>
                         </tr>
                     </thead>
 
@@ -143,13 +145,20 @@
                             <!-- Muestra los espacios disponibles de cada horario -->
                             <td th:text="${espaciosDisponibles.get(h.idHorario)}"></td>
 
+                            <td class="text-end">
+                                <a th:href="@{/reserva/inscritos(idHorario=${h.idHorario})}"
+                                   class="btn btn-outline-primary btn-sm">
+                                    <i class="fa-solid fa-users me-1"></i> [[#{inscritos.ver}]]
+                                </a>
+                            </td>
+
 
 
                         </tr>
 
                         <!-- Mensaje cuando no existen horarios -->
                         <tr th:if="${#lists.isEmpty(horarios)}">
-                            <td colspan="7" class="text-center">
+                            <td colspan="8" class="text-center">
                                 [[#{horario.lista.vacia}]]
                             </td>
                         </tr>

@@ -31,4 +31,7 @@ public interface ReservaRepository extends JpaRepository<Reserva, Integer> {
     Optional<Reserva> findByClienteCedulaAndHorarioIdHorario(String cedula, Integer idHorario);
 
     List<Reserva> findByClienteCedulaOrderByHorarioFechaAscHorarioHoraInicioAsc(String cedula);
+
+    //HU14: reservas de un horario según su estado, en el orden en que se hicieron
+    List<Reserva> findByHorarioIdHorarioAndEstadoOrderByFechaReservaAsc(Integer idHorario, String estado);
 }

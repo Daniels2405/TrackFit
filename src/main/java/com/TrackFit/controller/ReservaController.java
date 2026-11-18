@@ -14,8 +14,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.TrackFit.domain.Horario;
+import com.TrackFit.domain.Reserva;
 import com.TrackFit.service.ClienteService;
+import com.TrackFit.service.HorarioService;
 import com.TrackFit.service.ReservaService;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 
@@ -26,6 +30,7 @@ public class ReservaController {
 
     private final ReservaService reservaService;
     private final ClienteService clienteService;
+    private final HorarioService horarioService;
     private final MessageSource messageSource;
 
     // HU11: actividades disponibles para el cliente + sus reservas
@@ -42,7 +47,10 @@ public class ReservaController {
             model.addAttribute("membresia", reservaService.getMembresiaVigente(cedula).orElse(null));
             model.addAttribute("horarios", horarios);
             model.addAttribute("cupos", reservaService.getCuposDisponibles(horarios));
-            model.addAttribute("misReservas", reservaService.getReservasCliente(cedula));
+            List<Reserva> misReservas = reservaService.getReservasCliente(cedula);
+            model.addAttribute("misReservas", misReservas);
+            // HU13: reservas que todavía se pueden cancelar
+            model.addAttribute("cancelables", reservaService.getReservasCancelables(misReservas));
         }
         return "reserva/disponibles";
     }
@@ -58,6 +66,54 @@ public class ReservaController {
                     messageSource.getMessage("reserva.ok", null, LocaleContextHolder.getLocale()));
         } catch (IllegalArgumentException e) {
             // El Service ya manda el texto listo
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error",
+                    messageSource.getMessage("error.general", null, LocaleContextHolder.getLocale()));
+        }
+
+        redirectAttributes.addAttribute("cedula", cedula);
+        return "redirect:/reserva/disponibles";
+    }
+
+    // HU14: consultar los clientes inscritos en una sesión (horario) de una actividad
+    @GetMapping("/inscritos")
+    public String inscritos(@RequestParam(value = "idHorario", required = false) Integer idHorario,
+                            Model model) {
+
+        // Sesiones para el selector, de la más reciente a la más antigua
+        List<Horario> horarios = new ArrayList<>(horarioService.getHorarios());
+        horarios.sort(Comparator.comparing(Horario::getFecha)
+                .thenComparing(Horario::getHoraInicio)
+                .reversed());
+        model.addAttribute("horarios", horarios);
+        model.addAttribute("idHorario", idHorario);
+
+        if (idHorario != null) {
+            Horario horario = horarioService.getHorario(idHorario);
+            if (horario == null) {
+                model.addAttribute("error",
+                        messageSource.getMessage("inscritos.horario.no.existe", null, LocaleContextHolder.getLocale()));
+            } else {
+                model.addAttribute("horario", horario);
+                model.addAttribute("inscritos", reservaService.getInscritos(idHorario));
+                model.addAttribute("disponibles", horarioService.getEspaciosDisponibles(horario));
+            }
+        }
+        return "reserva/inscritos";
+    }
+
+    // HU13: el cliente cancela una reserva
+    @PostMapping("/cancelar")
+    public String cancelar(@RequestParam("cedula") String cedula,
+                           @RequestParam(value = "idReserva", required = false) Integer idReserva,
+                           RedirectAttributes redirectAttributes) {
+        try {
+            reservaService.cancelar(cedula, idReserva);
+            redirectAttributes.addFlashAttribute("todoOk",
+                    messageSource.getMessage("reserva.cancelada.ok", null, LocaleContextHolder.getLocale()));
+        } catch (IllegalArgumentException e) {
+            // El Service ya manda el texto traducido
             redirectAttributes.addFlashAttribute("error", e.getMessage());
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error",
