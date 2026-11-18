@@ -1,8 +1,10 @@
 package com.TrackFit.service;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,6 +13,7 @@ import com.TrackFit.domain.Membresia;
 import com.TrackFit.domain.PlanMembresia;
 import com.TrackFit.domain.Usuario;
 import com.TrackFit.repository.MembresiaRepository;
+import com.TrackFit.repository.PagoRepository;
 import com.TrackFit.repository.PlanMembresiaRepository;
 import com.TrackFit.repository.UsuarioRepository;
 
@@ -31,6 +34,7 @@ public class MembresiaService {
     private final MembresiaRepository membresiaRepository;
     private final UsuarioRepository usuarioRepository;
     private final PlanMembresiaRepository planMembresiaRepository;
+    private final PagoRepository pagoRepository;
 
     @Transactional(readOnly = true)
     public List<Membresia> getMembresias() {
@@ -49,7 +53,9 @@ public class MembresiaService {
 
     @Transactional(readOnly = true)
     public Optional<Membresia> getMembresiaVigente(String cedulaCliente) {
-        return membresiaRepository.findMembresiaVigenteCliente(cedulaCliente, LocalDate.now());
+        return membresiaRepository.findVigentesCliente(cedulaCliente, LocalDate.now())
+                .stream()
+                .findFirst();
     }
 
     @Transactional(readOnly = true)
@@ -79,6 +85,13 @@ public class MembresiaService {
 
         // Cálculo de fecha de vencimiento según la duración del plan
         LocalDate fechaVencimiento = fechaInicio.plusDays(plan.getDuracionDias());
+
+        // No se permite que el cliente tenga dos membresías activas en las mismas fechas.
+        // Para renovar, la nueva debe empezar el día después de que vence la actual.
+        List<Membresia> traslapes = membresiaRepository.findTraslapes(cedulaCliente, fechaInicio, fechaVencimiento);
+        if (!traslapes.isEmpty()) {
+            throw new MembresiaTraslapadaException(traslapes.get(0).getFechaVencimiento().plusDays(1));
+        }
 
         Membresia membresia = new Membresia();
         membresia.setUsuario(cliente);
@@ -114,7 +127,40 @@ public class MembresiaService {
         if (!membresiaRepository.existsById(idMembresia)) {
             throw new IllegalArgumentException("La membresía con id " + idMembresia + " no existe.");
         }
+        // Una membresía con pagos no se borra, para no perder el historial de ingresos
+        if (tienePagos(idMembresia)) {
+            throw new IllegalStateException("membresia.error.tiene.pagos");
+        }
         membresiaRepository.deleteById(idMembresia);
+    }
+
+    @Transactional(readOnly = true)
+    public boolean tienePagos(Integer idMembresia) {
+        return pagoRepository.existsByMembresiaIdMembresia(idMembresia);
+    }
+
+    // Ids de las membresías con pagos (en la vista se desactiva el botón de eliminar)
+    @Transactional(readOnly = true)
+    public Set<Integer> getIdsConPagos() {
+        return new HashSet<>(pagoRepository.findIdsMembresiasConPagos());
+    }
+
+    /**
+     * Se lanza cuando la nueva membresía se traslapa con otra activa del mismo cliente.
+     * Indica desde qué fecha se puede asignar la nueva (el día siguiente al vencimiento).
+     */
+    public static class MembresiaTraslapadaException extends RuntimeException {
+
+        private final LocalDate disponibleDesde;
+
+        public MembresiaTraslapadaException(LocalDate disponibleDesde) {
+            super("membresia.error.traslape");
+            this.disponibleDesde = disponibleDesde;
+        }
+
+        public LocalDate getDisponibleDesde() {
+            return disponibleDesde;
+        }
     }
 }
 

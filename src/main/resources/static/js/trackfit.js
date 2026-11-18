@@ -83,6 +83,34 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // ------------------------------------------------------------------
+    // 3b. Evitar doble envío: al enviar un formulario POST se desactivan sus
+    //     botones de guardar, para no registrar dos veces lo mismo.
+    //     Se respeta la confirmación de la sección 3 (si se cancela, no se envía).
+    // ------------------------------------------------------------------
+    document.addEventListener('submit', function (event) {
+        const form = event.target;
+        if (event.defaultPrevented || (form.method || '').toLowerCase() !== 'post') {
+            return;
+        }
+        setTimeout(function () {
+            form.querySelectorAll('button[type="submit"], input[type="submit"]').forEach(function (boton) {
+                if (!boton.disabled) {
+                    boton.disabled = true;
+                    boton.setAttribute('data-envio-desactivado', '');
+                }
+            });
+        }, 0);
+    });
+
+    // Si el usuario regresa con el botón "Atrás", los botones vuelven a estar activos
+    window.addEventListener('pageshow', function () {
+        document.querySelectorAll('[data-envio-desactivado]').forEach(function (boton) {
+            boton.disabled = false;
+            boton.removeAttribute('data-envio-desactivado');
+        });
+    });
+
+    // ------------------------------------------------------------------
     // 4. Modal de PLAN: modo agregar / editar
     // ------------------------------------------------------------------
     const planModal = document.getElementById('planModal');

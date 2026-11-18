@@ -29,6 +29,20 @@ public interface MembresiaRepository extends JpaRepository<Membresia, Integer> {
     @Query("SELECT m FROM Membresia m WHERE m.usuario.cedula = :cedula AND m.estado = 'Activa' AND m.fechaVencimiento >= :hoy")
     Optional<Membresia> findMembresiaVigenteCliente(@Param("cedula") String cedula, @Param("hoy") LocalDate hoy);
 
+    // Membresías activas de un cliente que se traslapan con un rango de fechas (ambos extremos incluidos).
+    // Se ordenan para saber cuál vence de último.
+    @Query("SELECT m FROM Membresia m WHERE m.usuario.cedula = :cedula AND m.estado = 'Activa' "
+         + "AND m.fechaInicio <= :fin AND m.fechaVencimiento >= :inicio ORDER BY m.fechaVencimiento DESC")
+    List<Membresia> findTraslapes(@Param("cedula") String cedula,
+                                  @Param("inicio") LocalDate inicio,
+                                  @Param("fin") LocalDate fin);
+
+    // Membresías vigentes de un cliente (la más reciente primero).
+    // Normalmente hay una sola; la lista evita un error si quedaron duplicadas de antes.
+    @Query("SELECT m FROM Membresia m WHERE m.usuario.cedula = :cedula AND m.estado = 'Activa' "
+         + "AND m.fechaVencimiento >= :hoy ORDER BY m.fechaInicio DESC")
+    List<Membresia> findVigentesCliente(@Param("cedula") String cedula, @Param("hoy") LocalDate hoy);
+
     // Comprobar si el cliente ya tiene una membresía vigente activa
     @Query("SELECT COUNT(m) > 0 FROM Membresia m WHERE m.usuario.cedula = :cedula AND m.estado = 'Activa' AND m.fechaVencimiento >= :hoy")
     boolean tieneMembresiaVigente(@Param("cedula") String cedula, @Param("hoy") LocalDate hoy);
