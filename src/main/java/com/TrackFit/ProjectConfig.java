@@ -31,7 +31,8 @@ public class ProjectConfig implements WebMvcConfigurer {
     @Bean
     public LocaleResolver localeResolver() {
         var slr = new SessionLocaleResolver();
-        slr.setDefaultLocale(Locale.getDefault());
+        // Español por defecto, sin depender del idioma de la computadora o servidor
+        slr.setDefaultLocale(Locale.of("es"));
         slr.setLocaleAttributeName("session.current.locale");
         slr.setTimeZoneAttributeName("session.current.timezone");
         return slr;
@@ -54,6 +55,9 @@ public class ProjectConfig implements WebMvcConfigurer {
         ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
         messageSource.setBasename("messages");
         messageSource.setDefaultEncoding("UTF-8");
+        // Si una clave no está en messages_en, usa messages.properties (español)
+        // en lugar del idioma del sistema operativo
+        messageSource.setFallbackToSystemLocale(false);
         return messageSource;
     }
 }

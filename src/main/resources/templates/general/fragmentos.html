@@ -4,6 +4,19 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
 
+    <!-- Textos traducidos para las alertas de validación del navegador (los usa trackfit.js) -->
+    <meta name="tf-validacion"
+          th:attr="data-requerido=#{validacion.requerido},
+                   data-seleccione=#{validacion.seleccione},
+                   data-casilla=#{validacion.casilla},
+                   data-minimo=#{validacion.minimo},
+                   data-maximo=#{validacion.maximo},
+                   data-paso=#{validacion.paso},
+                   data-formato=#{validacion.formato},
+                   data-correo=#{validacion.correo},
+                   data-largo-minimo=#{validacion.largo.minimo},
+                   data-largo-maximo=#{validacion.largo.maximo}"/>
+
     <!-- Carga de estilos en orden: Bootstrap, Font-Awesome, trackfit.css -->
     <link th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" rel="stylesheet"/>
     <link th:href="@{/webjars/font-awesome/css/all.css}" rel="stylesheet"/>
@@ -103,8 +116,22 @@
                             <i class="fa-solid fa-globe me-1"></i> [[#{menu.idioma}]]
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end shadow-sm">
-                            <li><a class="dropdown-item" th:href="@{/(lang=es)}"><i class="fa-solid fa-check text-success me-2"></i>[[#{menu.idioma.es}]]</a></li>
-                            <li><a class="dropdown-item" th:href="@{/(lang=en)}"><i class="fa-solid fa-language me-2"></i>[[#{menu.idioma.en}]]</a></li>
+                            <!-- "?lang=xx" cambia el idioma y se queda en la misma página.
+                                 El check verde marca el idioma activo. -->
+                            <li>
+                                <a class="dropdown-item" href="?lang=es"
+                                   th:classappend="${#locale.language == 'es'} ? 'fw-semibold'">
+                                    <i class="fa-solid me-2"
+                                       th:classappend="${#locale.language == 'es'} ? 'fa-check text-success' : 'fa-language'"></i>[[#{menu.idioma.es}]]
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="?lang=en"
+                                   th:classappend="${#locale.language == 'en'} ? 'fw-semibold'">
+                                    <i class="fa-solid me-2"
+                                       th:classappend="${#locale.language == 'en'} ? 'fa-check text-success' : 'fa-language'"></i>[[#{menu.idioma.en}]]
+                                </a>
+                            </li>
                         </ul>
                     </li>
                 </ul>

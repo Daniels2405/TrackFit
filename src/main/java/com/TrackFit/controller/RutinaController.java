@@ -2,6 +2,7 @@ package com.TrackFit.controller;
 import java.math.BigDecimal;
 import java.util.Locale;
 import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -108,9 +109,9 @@ public class RutinaController {
     }
     
     private void mostrarMensaje(RedirectAttributes redirectAttributes, String tipo, String llave) {
-        String texto = messageSource.getMessage(llave, null, null, Locale.getDefault());
+        String texto = messageSource.getMessage(llave, null, null, LocaleContextHolder.getLocale());
         if (texto == null) {
-            texto = messageSource.getMessage("error.general", null, Locale.getDefault());
+            texto = messageSource.getMessage("error.general", null, LocaleContextHolder.getLocale());
         }
         redirectAttributes.addFlashAttribute(tipo, texto);
     }

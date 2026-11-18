@@ -7,7 +7,7 @@
 
 <header th:replace="~{general/fragmentos :: header}"></header>
 
-<section th:replace="~{general/fragmentos :: titulo('fa-solid fa-weight-scale', 'Registrar progreso', 'Nueva medición física del cliente')}"></section>
+<section th:replace="~{general/fragmentos :: titulo('fa-solid fa-weight-scale', #{progreso.registrar}, #{progreso.registrar.subtitulo})}"></section>
 
 <main class="container mb-5">
 
@@ -17,7 +17,7 @@
 
     <div class="card shadow-sm">
         <div class="card-header bg-dark text-white">
-            <h5 class="mb-0">Datos de la medición</h5>
+            <h5 class="mb-0">[[#{progreso.datos.medicion}]]</h5>
         </div>
 
         <div class="card-body">
@@ -25,9 +25,9 @@
 
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label class="form-label">Cliente</label>
+                        <label class="form-label">[[#{progreso.cliente}]]</label>
                         <select name="cliente.cedula" class="form-select" required>
-                            <option value="">Seleccione un cliente</option>
+                            <option value="">[[#{progreso.seleccione.cliente}]]</option>
                             <option th:each="c : ${clientes}"
                                     th:value="${c.cedula}"
                                     th:selected="${progreso.cliente != null and progreso.cliente.cedula == c.cedula}"
@@ -37,9 +37,9 @@
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label class="form-label">Entrenador</label>
+                        <label class="form-label">[[#{progreso.entrenador}]]</label>
                         <select name="entrenador.cedula" class="form-select" required>
-                            <option value="">Seleccione un entrenador</option>
+                            <option value="">[[#{progreso.seleccione.entrenador}]]</option>
                             <option th:each="e : ${entrenadores}"
                                     th:value="${e.cedula}"
                                     th:selected="${progreso.entrenador != null and progreso.entrenador.cedula == e.cedula}"
@@ -51,7 +51,7 @@
 
                 <div class="row">
                     <div class="col-md-4 mb-3">
-                        <label class="form-label">Fecha</label>
+                        <label class="form-label">[[#{progreso.fecha}]]</label>
                         <input type="date"
                                name="fecha"
                                class="form-control"
@@ -61,7 +61,7 @@
                     </div>
 
                     <div class="col-md-4 mb-3">
-                        <label class="form-label">Peso (kg)</label>
+                        <label class="form-label">[[#{progreso.peso}]]</label>
                         <input type="number"
                                name="peso"
                                th:value="${progreso.peso}"
@@ -73,7 +73,7 @@
                     </div>
 
                     <div class="col-md-4 mb-3">
-                        <label class="form-label">% de grasa <small class="text-muted">(opcional)</small></label>
+                        <label class="form-label">[[#{progreso.grasa}]] <small class="text-muted">[[#{general.opcional}]]</small></label>
                         <input type="number"
                                name="porcentajeGrasa"
                                th:value="${progreso.porcentajeGrasa}"
@@ -85,7 +85,7 @@
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">Observaciones <small class="text-muted">(opcional)</small></label>
+                    <label class="form-label">[[#{progreso.observaciones}]] <small class="text-muted">[[#{general.opcional}]]</small></label>
                     <textarea name="observaciones"
                               class="form-control"
                               rows="3"
@@ -95,12 +95,12 @@
 
                 <button type="submit" class="btn btn-primary">
                     <i class="fa-solid fa-floppy-disk me-1"></i>
-                    Guardar progreso
+                    [[#{progreso.guardar}]]
                 </button>
 
                 <a th:href="@{/progreso/listado}" class="btn btn-secondary ms-2">
                     <i class="fa-solid fa-arrow-left me-1"></i>
-                    Volver al historial
+                    [[#{progreso.volver}]]
                 </a>
             </form>
         </div>

@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.Locale;
 
 import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -74,7 +75,7 @@ public class MembresiaController {
             }
         }
 
-        redirectAttributes.addFlashAttribute(tipo, messageSource.getMessage(mensaje, null, Locale.getDefault()));
+        redirectAttributes.addFlashAttribute(tipo, messageSource.getMessage(mensaje, null, LocaleContextHolder.getLocale()));
         return "redirect:/membresia/listado";
     }
 
@@ -90,7 +91,7 @@ public class MembresiaController {
             mensaje = "error.general";
         }
 
-        redirectAttributes.addFlashAttribute(tipo, messageSource.getMessage(mensaje, null, Locale.getDefault()));
+        redirectAttributes.addFlashAttribute(tipo, messageSource.getMessage(mensaje, null, LocaleContextHolder.getLocale()));
         return "redirect:/membresia/listado";
     }
 
@@ -106,7 +107,7 @@ public class MembresiaController {
             mensaje = "error.general";
         }
 
-        redirectAttributes.addFlashAttribute(tipo, messageSource.getMessage(mensaje, null, Locale.getDefault()));
+        redirectAttributes.addFlashAttribute(tipo, messageSource.getMessage(mensaje, null, LocaleContextHolder.getLocale()));
         return "redirect:/membresia/listado";
     }
 

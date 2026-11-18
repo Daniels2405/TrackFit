@@ -7,6 +7,8 @@ package com.TrackFit.controller;
 import com.TrackFit.domain.Actividad;
 import com.TrackFit.service.ActividadService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,6 +24,9 @@ public class ActividadController {
 
     //Servicio que contiene los métodos para gestionar actividades
     private final ActividadService actividadService;
+
+    //Permite mostrar los mensajes en el idioma elegido
+    private final MessageSource messageSource;
 
     //Método que muestra el listado de actividades y el formulario
     @GetMapping("/listado")
@@ -48,7 +53,7 @@ public class ActividadController {
             if (actividad.getNombre() == null
                     || actividad.getNombre().isBlank()) {
                 throw new IllegalArgumentException(
-                        "Debe ingresar el nombre de la actividad");
+                        "actividad.error.nombre.obligatorio");
             }
 
             //Elimina espacios al inicio y al final del nombre
@@ -62,22 +67,28 @@ public class ActividadController {
 
             //Muestra un mensaje cuando se guarda correctamente
             redirectAttributes.addFlashAttribute(
-                    "todoOk", "Actividad registrada correctamente");
+                    "todoOk", mensaje("actividad.guardado.ok"));
 
         } catch (IllegalArgumentException e) {
 
             //Muestra el mensaje cuando la actividad ya existe o cuando el nombre ingresado no es válido
             redirectAttributes.addFlashAttribute(
-                    "error", e.getMessage());
+                    "error", mensaje(e.getMessage() != null ? e.getMessage() : "error.general"));
 
         } catch (Exception e) {
 
             //Muestra un mensaje si ocurre otro error
             redirectAttributes.addFlashAttribute(
-                    "error", "No se pudo registrar la actividad");
+                    "error", mensaje("actividad.error.registrar"));
         }
 
         //Regresa al listado de actividades
         return "redirect:/actividad/listado";
+    }
+
+    // Traduce una clave de messages.properties al idioma que eligió el usuario.
+    // Si la clave no existe, devuelve el texto tal cual.
+    private String mensaje(String clave, Object... args) {
+        return messageSource.getMessage(clave, args, clave, LocaleContextHolder.getLocale());
     }
 }

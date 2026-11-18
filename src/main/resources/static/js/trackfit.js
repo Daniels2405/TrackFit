@@ -201,6 +201,72 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // ------------------------------------------------------------------
+    // 8. Alertas de validación del navegador en el idioma de TrackFit
+    //    ("Completa este campo", "Selecciona un elemento de la lista"...).
+    //    El navegador las muestra en su propio idioma; aquí se reemplazan por
+    //    los textos de messages.properties que llegan en <meta name="tf-validacion">.
+    // ------------------------------------------------------------------
+    const metaValidacion = document.querySelector('meta[name="tf-validacion"]');
+    if (metaValidacion) {
+        const texto = function (nombre, valor) {
+            return attr(metaValidacion, 'data-' + nombre).replace('{0}', valor === undefined ? '' : valor);
+        };
+
+        const mensajeValidacion = function (campo) {
+            const v = campo.validity;
+            if (v.valueMissing) {
+                if (campo.tagName === 'SELECT') {
+                    return texto('seleccione');
+                }
+                if (campo.type === 'checkbox' || campo.type === 'radio') {
+                    return texto('casilla');
+                }
+                return texto('requerido');
+            }
+            if (v.rangeUnderflow) {
+                return texto('minimo', campo.min);
+            }
+            if (v.rangeOverflow) {
+                return texto('maximo', campo.max);
+            }
+            if (v.stepMismatch) {
+                return texto('paso');
+            }
+            if (v.typeMismatch && campo.type === 'email') {
+                return texto('correo');
+            }
+            if (v.tooShort) {
+                return texto('largo-minimo', campo.minLength);
+            }
+            if (v.tooLong) {
+                return texto('largo-maximo', campo.maxLength);
+            }
+            if (v.typeMismatch || v.patternMismatch || v.badInput) {
+                return texto('formato');
+            }
+            return '';
+        };
+
+        // "invalid" no burbujea: se escucha en fase de captura para todos los formularios
+        document.addEventListener('invalid', function (event) {
+            const campo = event.target;
+            campo.setCustomValidity('');
+            if (!campo.validity.valid) {
+                campo.setCustomValidity(mensajeValidacion(campo));
+            }
+        }, true);
+
+        // Al corregir el campo se limpia el mensaje para que el navegador lo vuelva a evaluar
+        const limpiarValidacion = function (event) {
+            if (event.target.setCustomValidity) {
+                event.target.setCustomValidity('');
+            }
+        };
+        document.addEventListener('input', limpiarValidacion, true);
+        document.addEventListener('change', limpiarValidacion, true);
+    }
+
+    // ------------------------------------------------------------------
     // 7. Ocultar automáticamente los Toasts tras 4 segundos
     // ------------------------------------------------------------------
     setTimeout(function () {

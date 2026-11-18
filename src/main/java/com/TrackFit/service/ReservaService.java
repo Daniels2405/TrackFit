@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Locale;
 import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 
 //Servicio encargado de validar y guardar las reservas
 @Service
@@ -182,7 +183,7 @@ public class ReservaService {
 
     // Crea un error con el texto ya traducido desde messages.properties
     private IllegalArgumentException error(String llave, Object... valores) {
-        String texto = messageSource.getMessage(llave, valores, Locale.getDefault());
+        String texto = messageSource.getMessage(llave, valores, LocaleContextHolder.getLocale());
         return new IllegalArgumentException(texto);
     }
 

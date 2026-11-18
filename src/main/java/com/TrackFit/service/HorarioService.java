@@ -47,7 +47,7 @@ public class HorarioService {
         if (horario.getActividad() == null
                 || horario.getActividad().getIdActividad() == null) {
             throw new IllegalArgumentException(
-                    "Debe seleccionar una actividad");
+                    "horario.error.actividad.obligatoria");
         }
 
         //Busca la actividad seleccionada en la base de datos
@@ -57,13 +57,13 @@ public class HorarioService {
         //Verifica que la actividad exista
         if (actividad == null) {
             throw new IllegalArgumentException(
-                    "La actividad seleccionada no existe");
+                    "horario.error.actividad.no.existe");
         }
 
         //Verifica que la actividad esté activa
         if (!Boolean.TRUE.equals(actividad.getActivo())) {
             throw new IllegalArgumentException(
-                    "No se pueden registrar horarios para actividades inactivas");
+                    "horario.error.actividad.inactiva");
         }
 
         //Asigna al horario la actividad encontrada
@@ -72,31 +72,31 @@ public class HorarioService {
         //Verifica que se haya ingresado una fecha
         if (horario.getFecha() == null) {
             throw new IllegalArgumentException(
-                    "Debe ingresar una fecha");
+                    "horario.error.fecha.obligatoria");
         }
 
         //Verifica que la fecha no sea anterior al día actual
         if (horario.getFecha().isBefore(LocalDate.now())) {
             throw new IllegalArgumentException(
-                    "No se pueden registrar horarios con fechas anteriores");
+                    "horario.error.fecha.pasada");
         }
 
         //Verifica que se hayan ingresado ambas horas
         if (horario.getHoraInicio() == null || horario.getHoraFin() == null) {
             throw new IllegalArgumentException(
-                    "Debe ingresar la hora de inicio y finalización");
+                    "horario.error.horas.obligatorias");
         }
 
         //Verifica que la hora final sea posterior a la inicial
         if (!horario.getHoraFin().isAfter(horario.getHoraInicio())) {
             throw new IllegalArgumentException(
-                    "La hora de finalización debe ser posterior a la hora de inicio");
+                    "horario.error.hora.invalida");
         }
 
         //Verifica que el cupo máximo sea mayor que cero
         if (horario.getCupoMaximo() == null || horario.getCupoMaximo() <= 0) {
             throw new IllegalArgumentException(
-                    "El cupo máximo debe ser mayor que cero");
+                    "horario.error.cupo.invalido");
         }
 
         //Verifica si ya existe un horario para la misma actividad, fecha y hora de inicio
@@ -109,7 +109,7 @@ public class HorarioService {
         //Si el horario ya existe, no permite registrarlo
         if (existeHorario) {
             throw new IllegalArgumentException(
-                    "Ya existe un horario para esta actividad en la fecha y hora seleccionadas");
+                    "horario.error.duplicado");
         }
 
 //Obtiene los horarios que ya están registrados
@@ -129,7 +129,7 @@ public class HorarioService {
 
                     //Impide guardar horarios que coincidan
                     throw new IllegalArgumentException(
-                            "La actividad ya tiene un horario que coincide con las horas seleccionadas");
+                            "horario.error.traslape");
                 }
             }
         }

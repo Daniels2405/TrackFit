@@ -5,6 +5,7 @@
 package com.TrackFit.controller;
 import java.util.Locale;
 import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -54,13 +55,13 @@ public class ReservaController {
         try {
             reservaService.reservar(cedula, idHorario);
             redirectAttributes.addFlashAttribute("todoOk",
-                    messageSource.getMessage("reserva.ok", null, Locale.getDefault()));
+                    messageSource.getMessage("reserva.ok", null, LocaleContextHolder.getLocale()));
         } catch (IllegalArgumentException e) {
             // El Service ya manda el texto listo
             redirectAttributes.addFlashAttribute("error", e.getMessage());
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error",
-                    messageSource.getMessage("error.general", null, Locale.getDefault()));
+                    messageSource.getMessage("error.general", null, LocaleContextHolder.getLocale()));
         }
 
         redirectAttributes.addAttribute("cedula", cedula);

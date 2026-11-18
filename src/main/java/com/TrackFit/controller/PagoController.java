@@ -9,6 +9,8 @@ import com.TrackFit.service.PagoService;
 import com.TrackFit.service.MembresiaService;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,6 +29,9 @@ public class PagoController {
     private final MembresiaService membresiaService;
     private final UsuarioService usuarioService;
 
+    //Permite mostrar los mensajes en el idioma elegido
+    private final MessageSource messageSource;
+
     @GetMapping("/listado")
     public String listado(Model model) {
 
@@ -43,7 +48,7 @@ public class PagoController {
         try {
             if (pago.getMembresia() == null
                     || pago.getMembresia().getIdMembresia() == null) {
-                throw new IllegalArgumentException("Seleccione una membresía");
+                throw new IllegalArgumentException("pago.error.membresia.obligatoria");
             }
 
             var membresiaEncontrada = membresiaService.getMembresias()
@@ -53,14 +58,14 @@ public class PagoController {
                     .findFirst();
 
             if (membresiaEncontrada.isEmpty()) {
-                throw new IllegalArgumentException("La membresía no existe");
+                throw new IllegalArgumentException("pago.error.membresia.no.existe");
             }
 
             pago.setMembresia(membresiaEncontrada.get());
 
             if (pago.getMonto() == null
                     || pago.getMonto().signum() <= 0) {
-                throw new IllegalArgumentException("El monto debe ser mayor a cero");
+                throw new IllegalArgumentException("pago.error.monto.invalido");
             }
 
             if (pago.getMetodoPago() == null
@@ -69,7 +74,7 @@ public class PagoController {
                     && !pago.getMetodoPago().equals("SINPE")
                     && !pago.getMetodoPago().equals("Transferencia"))) {
 
-                throw new IllegalArgumentException("Método de pago no válido");
+                throw new IllegalArgumentException("pago.error.metodo.invalido");
             }
 
             if (pago.getFecha() == null) {
@@ -78,21 +83,34 @@ public class PagoController {
 
             Usuario recepcion = usuarioService.getUsuario("100000002")
                     .orElseThrow(()
-                            -> new IllegalArgumentException("No existe el usuario de recepción"));
+                            -> new IllegalArgumentException("pago.error.recepcion"));
 
             pago.setUsuarioRegistra(recepcion);
 
             pagoService.save(pago);
 
             redirectAttributes.addFlashAttribute(
-                    "todoOk", "Pago registrado correctamente");
+                    "todoOk", mensaje("pago.guardado.ok"));
+
+        } catch (IllegalArgumentException e) {
+
+            // Validaciones: la excepción trae la clave del mensaje
+            redirectAttributes.addFlashAttribute(
+                    "error", mensaje("pago.error.registrar",
+                            mensaje(e.getMessage() != null ? e.getMessage() : "error.general")));
 
         } catch (Exception e) {
 
             redirectAttributes.addFlashAttribute(
-                    "error", "No se pudo registrar el pago: " + e.getMessage());
+                    "error", mensaje("pago.error.registrar", mensaje("error.general")));
         }
 
         return "redirect:/pago/listado";
+    }
+
+    // Traduce una clave de messages.properties al idioma que eligió el usuario.
+    // Si la clave no existe, devuelve el texto tal cual.
+    private String mensaje(String clave, Object... args) {
+        return messageSource.getMessage(clave, args, clave, LocaleContextHolder.getLocale());
     }
 }
