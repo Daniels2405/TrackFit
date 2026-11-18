@@ -36,16 +36,21 @@ public class ReporteService {
     // MEMBRESÍAS (estado actual, no depende del rango de fechas)
     // ------------------------------------------------------------------
 
-    // Cantidad de membresías por estado: vigentes, vencidas, canceladas y total
+    // Cantidad de membresías por estado: vigentes, programadas, vencidas, canceladas y total
     @Transactional(readOnly = true)
     public Map<String, Long> resumenMembresias() {
         long vigentes = 0;
+        long programadas = 0;
         long vencidas = 0;
         long canceladas = 0;
+        LocalDate hoy = LocalDate.now();
 
         for (Membresia m : membresiaService.getMembresias()) {
             if ("Cancelada".equalsIgnoreCase(m.getEstado())) {
                 canceladas++;
+            } else if (m.getFechaInicio() != null && m.getFechaInicio().isAfter(hoy)) {
+                // Programada: todavía no llega su fecha de inicio (por ejemplo, una renovación)
+                programadas++;
             } else if (m.isVigente()) {
                 vigentes++;
             } else {
@@ -55,9 +60,10 @@ public class ReporteService {
 
         Map<String, Long> resumen = new LinkedHashMap<>();
         resumen.put("vigentes", vigentes);
+        resumen.put("programadas", programadas);
         resumen.put("vencidas", vencidas);
         resumen.put("canceladas", canceladas);
-        resumen.put("total", vigentes + vencidas + canceladas);
+        resumen.put("total", vigentes + programadas + vencidas + canceladas);
         return resumen;
     }
 
@@ -67,8 +73,11 @@ public class ReporteService {
         Map<String, ReporteFila> filas = new LinkedHashMap<>();
         long total = 0;
 
+        LocalDate hoy = LocalDate.now();
         for (Membresia m : membresiaService.getMembresias()) {
-            if (m.isVigente()) {
+            // Solo las vigentes de hoy (no las programadas a futuro)
+            boolean programada = m.getFechaInicio() != null && m.getFechaInicio().isAfter(hoy);
+            if (m.isVigente() && !programada) {
                 String plan = m.getPlanMembresia().getNombre();
                 filas.computeIfAbsent(plan, ReporteFila::new).sumar(null);
                 total++;

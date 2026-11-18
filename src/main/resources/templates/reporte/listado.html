@@ -49,26 +49,32 @@
             <h4 class="fw-bold mb-1"><i class="fa-solid fa-id-card text-primary me-2"></i>[[#{menu.membresias}]]</h4>
             <p class="text-muted small mb-3">[[#{reporte.membresias.nota}]]</p>
 
-            <div class="row g-3 mb-3">
-                <div class="col-6 col-lg-3">
+            <div class="row row-cols-2 row-cols-lg-5 g-3 mb-3">
+                <div class="col">
                     <div class="card p-3 border-0 shadow-sm h-100">
                         <small class="text-muted fw-semibold">[[#{membresia.vigente}]]</small>
                         <h3 class="fw-bold mb-0 text-success" th:text="${membresias['vigentes']}">0</h3>
                     </div>
                 </div>
-                <div class="col-6 col-lg-3">
+                <div class="col">
+                    <div class="card p-3 border-0 shadow-sm h-100">
+                        <small class="text-muted fw-semibold">[[#{reporte.membresias.programadas}]]</small>
+                        <h3 class="fw-bold mb-0 text-info" th:text="${membresias['programadas']}">0</h3>
+                    </div>
+                </div>
+                <div class="col">
                     <div class="card p-3 border-0 shadow-sm h-100">
                         <small class="text-muted fw-semibold">[[#{membresia.vencida}]]</small>
                         <h3 class="fw-bold mb-0 text-warning" th:text="${membresias['vencidas']}">0</h3>
                     </div>
                 </div>
-                <div class="col-6 col-lg-3">
+                <div class="col">
                     <div class="card p-3 border-0 shadow-sm h-100">
                         <small class="text-muted fw-semibold">[[#{membresia.cancelada}]]</small>
                         <h3 class="fw-bold mb-0 text-secondary" th:text="${membresias['canceladas']}">0</h3>
                     </div>
                 </div>
-                <div class="col-6 col-lg-3">
+                <div class="col">
                     <div class="card p-3 border-0 shadow-sm h-100">
                         <small class="text-muted fw-semibold">[[#{reporte.total}]]</small>
                         <h3 class="fw-bold mb-0 text-primary" th:text="${membresias['total']}">0</h3>
