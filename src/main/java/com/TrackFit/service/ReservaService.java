@@ -183,6 +183,12 @@ public class ReservaService {
         save(reserva);
     }
 
+    // HU14: clientes inscritos (reservas confirmadas) en un horario
+    @Transactional(readOnly = true)
+    public List<Reserva> getInscritos(Integer idHorario) {
+        return reservaRepository.findByHorarioIdHorarioAndEstadoOrderByFechaReservaAsc(idHorario, "Confirmada");
+    }
+
     // HU13: el cliente cancela una de sus reservas confirmadas.
     // El espacio queda libre de inmediato, porque los cupos solo cuentan las reservas Confirmadas.
     @Transactional

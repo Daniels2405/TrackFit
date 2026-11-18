@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://thymeleaf.org">
+    <head th:replace="~{general/fragmentos :: head}"></head>
+    <body>
+        <header th:replace="~{general/fragmentos :: header}"></header>
+
+        <!-- HU14: Consultar inscritos en una actividad -->
+        <section th:replace="~{general/fragmentos :: titulo('fa-solid fa-clipboard-list', #{inscritos.titulo}, #{inscritos.subtitulo})}"></section>
+
+        <main class="container mb-5">
+
+            <!-- Selector de la sesión (horario) -->
+            <div class="card p-3 mb-4">
+                <form method="get" th:action="@{/reserva/inscritos}" class="row g-2 align-items-end">
+                    <div class="col-md-8">
+                        <label class="form-label">[[#{inscritos.sesion}]]</label>
+                        <select name="idHorario" class="form-select" required>
+                            <option value="">[[#{inscritos.seleccione.horario}]]</option>
+                            <option th:each="h : ${horarios}"
+                                    th:value="${h.idHorario}"
+                                    th:selected="${h.idHorario == idHorario}"
+                                    th:text="${h.actividad.nombre + ' · ' + #temporals.format(h.fecha, 'dd/MM/yyyy') + ' · ' + #temporals.format(h.horaInicio, 'HH:mm')}">
+                                Yoga · 20/11/2026 · 18:00
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fa-solid fa-magnifying-glass me-1"></i> [[#{inscritos.ver}]]
+                        </button>
+                        <a th:href="@{/horario/listado}" class="btn btn-outline-secondary ms-1">
+                            <i class="fa-solid fa-arrow-left me-1"></i> [[#{menu.horarios}]]
+                        </a>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Detalle de la sesión seleccionada -->
+            <th:block th:if="${horario != null}">
+
+                <div class="card p-4 mb-4 border-start border-4 border-primary">
+                    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+                        <div>
+                            <h4 class="fw-bold mb-1" th:text="${horario.actividad.nombre}">Yoga</h4>
+                            <div class="text-muted small">
+                                <i class="fa-solid fa-calendar me-1"></i>
+                                [[${#temporals.format(horario.fecha, 'dd/MM/yyyy')}]]
+                                <i class="fa-solid fa-clock ms-3 me-1"></i>
+                                [[${#temporals.format(horario.horaInicio, 'HH:mm')}]] - [[${#temporals.format(horario.horaFin, 'HH:mm')}]]
+                                <i class="fa-solid fa-user-tie ms-3 me-1"></i>
+                                <span th:text="${horario.entrenador != null} ? ${horario.entrenador.nombreCompleto} : #{inscritos.sin.entrenador}">Entrenador</span>
+                            </div>
+                        </div>
+                        <div class="text-end">
+                            <div class="fs-3 fw-bold text-primary">
+                                [[${#lists.size(inscritos)}]] / [[${horario.cupoMaximo}]]
+                            </div>
+                            <span class="badge rounded-pill"
+                                  th:classappend="${disponibles > 0} ? 'bg-success' : 'bg-danger'"
+                                  th:text="${disponibles > 0} ? #{inscritos.disponibles(${disponibles})} : #{horario.lleno}">
+                                5 espacios libres
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lista de inscritos -->
+                <div class="card p-4">
+                    <h5 class="fw-bold mb-3">
+                        <i class="fa-solid fa-users text-primary me-2"></i> [[#{inscritos.total}]]
+                    </h5>
+
+                    <p th:if="${#lists.isEmpty(inscritos)}" class="text-muted mb-0">[[#{inscritos.vacio}]]</p>
+
+                    <div th:unless="${#lists.isEmpty(inscritos)}" class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>[[#{membresia.cliente}]]</th>
+                                    <th>[[#{usuario.cedula}]]</th>
+                                    <th>[[#{usuario.correo}]]</th>
+                                    <th>[[#{usuario.telefono}]]</th>
+                                    <th>[[#{inscritos.fecha.reserva}]]</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="r, fila : ${inscritos}">
+                                    <td th:text="${fila.count}">1</td>
+                                    <td class="fw-semibold" th:text="${r.cliente.nombreCompleto}">Carlos Rodríguez Mora</td>
+                                    <td th:text="${r.cliente.cedula}">101110111</td>
+                                    <td th:text="${r.cliente.correo}">correo@ejemplo.com</td>
+                                    <td th:text="${r.cliente.telefono}">8888-8888</td>
+                                    <td th:text="${r.fechaReserva != null} ? ${#temporals.format(r.fechaReserva, 'dd/MM/yyyy HH:mm')} : ''">17/11/2026 18:30</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </th:block>
+        </main>
+
+        <section th:replace="~{general/fragmentos :: mostrarToast}"></section>
+        <footer th:replace="~{general/fragmentos :: footer}"></footer>
+    </body>
+</html>
